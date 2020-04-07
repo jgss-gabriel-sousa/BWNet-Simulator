@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="BEngine" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="States\;" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/sfml test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++14" />
+					<Add option="-g" />
+					<Add directory="D:/SFML-2.5.1/include" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add library="sfml-graphics-d" />
+					<Add library="sfml-audio-d" />
+					<Add library="sfml-network-d" />
+					<Add library="sfml-window-d" />
+					<Add library="sfml-system-d" />
+					<Add directory="D:/SFML-2.5.1/lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/sfml test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="sfml-graphics" />
+					<Add library="sfml-audio" />
+					<Add library="sfml-network" />
+					<Add library="sfml-window" />
+					<Add library="sfml-system" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="include/AssetManager.h" />
+		<Unit filename="include/DEFINITIONS.h" />
+		<Unit filename="include/EditorState.h">
+			<Option virtualFolder="States/" />
+		</Unit>
+		<Unit filename="include/Game.h" />
+		<Unit filename="include/InputManager.h" />
+		<Unit filename="include/LoadingState.h">
+			<Option virtualFolder="States/" />
+		</Unit>
+		<Unit filename="include/Log.h" />
+		<Unit filename="include/MainMenuState.h">
+			<Option virtualFolder="States/" />
+		</Unit>
+		<Unit filename="include/Object.h" />
+		<Unit filename="include/State.h" />
+		<Unit filename="include/StateMachine.h" />
+		<Unit filename="sfml-audio-2.dll" />
+		<Unit filename="sfml-audio-d-2.dll" />
+		<Unit filename="sfml-graphics-2.dll" />
+		<Unit filename="sfml-graphics-d-2.dll" />
+		<Unit filename="sfml-network-2.dll" />
+		<Unit filename="sfml-network-d-2.dll" />
+		<Unit filename="sfml-system-2.dll" />
+		<Unit filename="sfml-system-d-2.dll" />
+		<Unit filename="sfml-window-2.dll" />
+		<Unit filename="sfml-window-d-2.dll" />
+		<Unit filename="src/AssetManager.cpp" />
+		<Unit filename="src/EditorState.cpp">
+			<Option virtualFolder="States/" />
+		</Unit>
+		<Unit filename="src/Game.cpp" />
+		<Unit filename="src/InputManager.cpp" />
+		<Unit filename="src/LoadingState.cpp">
+			<Option virtualFolder="States/" />
+		</Unit>
+		<Unit filename="src/Log.cpp" />
+		<Unit filename="src/MainMenuState.cpp">
+			<Option virtualFolder="States/" />
+		</Unit>
+		<Unit filename="src/Object.cpp" />
+		<Unit filename="src/StateMachine.cpp" />
+		<Unit filename="src/main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
