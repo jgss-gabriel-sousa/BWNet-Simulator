@@ -69,7 +69,7 @@ void EditorState::HandleInput(){
             newObject.setTexture(_data->assets.GetTexture("iconComputer"));
             addingObject = true;
             newObjectType = "Computer";
-            helpText.setString("Notebook");
+            helpText.setString("Laptop");
         }
         else if(_data->input.IsSpriteClicked(smartphoneIcon,sf::Mouse::Left,_data->window)){
             newObject.setTexture(_data->assets.GetTexture("iconSmartphone"));
@@ -81,12 +81,12 @@ void EditorState::HandleInput(){
             newObject.setTexture(_data->assets.GetTexture("iconRouter"));
             addingObject = true;
             newObjectType = "Router";
-            helpText.setString("Roteador");
+            helpText.setString("Router");
         }
         else if(_data->input.IsSpriteClicked(deleteButton,sf::Mouse::Left,_data->window)){
             newObject.setTexture(_data->assets.GetTexture("buttonDelete"));
             deletingObject = true;
-            helpText.setString("Deletar");
+            helpText.setString("Delete");
         }
 
         showStatsWindow = false;
@@ -100,7 +100,7 @@ void EditorState::HandleInput(){
             if(_data->input.IsOverSprite(obj[i].sprite,_data->window)){
                 statsText[0].setString("IP: "+obj[i].ip);
                 if(obj[i].type != "Router")
-                    statsText[1].setString("Roteador: "+obj[i].routerIp);
+                    statsText[1].setString("Router: "+obj[i].routerIp);
                 else
                     statsText[1].setString("");
                 showStatsWindow = true;

@@ -42,15 +42,14 @@ void MainMenuState::Init(){
     int creditsTextSize = 24;
     vector<int> highlited;
     highlited.push_back(creditsText.size());
-    creditsText.push_back(sf::Text("Desenvolvido por Gabriel Sousa",_data->assets.GetFont("arial"),creditsTextSize));
+    creditsText.push_back(sf::Text("Developed by Gabriel Sousa",_data->assets.GetFont("arial"),creditsTextSize));
     creditsText.push_back(sf::Text("github.com/JGSS-GabrielSousa",_data->assets.GetFont("arial"),creditsTextSize));
     creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
     creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
     highlited.push_back(creditsText.size());
-    creditsText.push_back(sf::Text("Agradecimentos Especiais:",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("Dr. Fernando Menezes Matos",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("Laurent Gomila pelo SFML",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("Bjarne Stroustrup pelo C++",_data->assets.GetFont("arial"),creditsTextSize));
+    creditsText.push_back(sf::Text("Special Thanks:",_data->assets.GetFont("arial"),creditsTextSize));
+    creditsText.push_back(sf::Text("Laurent Gomila - SFML",_data->assets.GetFont("arial"),creditsTextSize));
+    creditsText.push_back(sf::Text("Bjarne Stroustrup - C++",_data->assets.GetFont("arial"),creditsTextSize));
     creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
     creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
     creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
@@ -140,25 +139,25 @@ void MainMenuState::HandleInput(){
 
         if(showSelectSimulation){
             if(_data->input.IsOverSprite(newSimulation,_data->window)){
-                helpText.setString("Criar Nova Simulação");
+                helpText.setString("Create New Simulation");
             }
             else if(_data->input.IsOverSprite(buttonSelect,_data->window)){
                 if(insertingText)
-                    helpText.setString("Criar");
+                    helpText.setString("Create");
                 else
-                    helpText.setString("Carregar");
+                    helpText.setString("Load");
             }
             else if(_data->input.IsOverSprite(buttonReturn,_data->window)){
-                helpText.setString("Retornar");
+                helpText.setString("Return");
             }
             else if(insertingText){
-                helpText.setString("Digite o nome do arquivo");
+                helpText.setString("Enter the file name");
             }
             else if(_data->input.IsOverSprite(buttonDeleteSimulation,_data->window)){
-                helpText.setString("Deletar Simulação");
+                helpText.setString("Delete Simulation");
             }
             else{
-                helpText.setString("Selecione uma Simulação");
+                helpText.setString("Select a Simulation");
             }
 
             if(_data->input.IsSpriteClicked(buttonSelect,sf::Mouse::Left,_data->window)){

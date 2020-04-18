@@ -116,7 +116,7 @@ void SimulationState::HandleInput(){
             if(_data->input.IsOverSprite(obj[i].sprite,_data->window)){
                 statsText[0].setString("IP: "+obj[i].ip);
                 if(obj[i].type != "Router")
-                    statsText[1].setString("Roteador: "+obj[i].routerIp);
+                    statsText[1].setString("Router: "+obj[i].routerIp);
                 else
                     statsText[1].setString("");
                 showStatsWindow = true;
@@ -130,7 +130,7 @@ void SimulationState::HandleInput(){
             newObject.setScale(0.5,0.5);
             creatingPackage = true;
             showPacketLine = false;
-            helpText.setString("Selecione a Origem");
+            helpText.setString("Select Origin");
         }
 
         if(creatingPackage && creatingPackageDestiny == false){
@@ -143,7 +143,7 @@ void SimulationState::HandleInput(){
                         origin = obj[i].ip;
                         CreatePacket("origin",sf::Vector2f(spriteAux.getPosition().x+spriteAux.getGlobalBounds().width/2,
                                                             spriteAux.getPosition().y+spriteAux.getGlobalBounds().height/2));
-                        helpText.setString("Selecione o Destino");
+                        helpText.setString("Select Destination");
                         aux = true;
                         break;
                     }
@@ -234,7 +234,7 @@ void SimulationState::Update(float dt){
     larguraBox = simulationSpeedBar.getPosition().x+simulationSpeedBar.getGlobalBounds().width - 300;
     simulationSpeed = (pow(pointerPos,2)/pow(larguraBox,2))/0.25;
 
-    simulationSpeedText.setString("Velocidade da Simulação: "+to_string(simulationSpeed));
+    simulationSpeedText.setString("Simulation Speed: "+to_string(simulationSpeed));
     simulationSpeedText.setPosition(SCREEN_WIDTH/2-simulationSpeedText.getGlobalBounds().width/2,2);
 }
 
@@ -304,8 +304,8 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     Object destiny;
     Object actual;
     Object next;
+    Object aux;
     int TTL = 0;
-    string previousRouter="";
     actualSimulationStep = 0;
 
     packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmall"));
@@ -319,9 +319,9 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     }else
         return;
 
-    simulationLog.push_back("Inicio transmissao de pacote:");
-    simulationLog.push_back(" Origem: "+actual.ip);
-    simulationLog.push_back("Destino: "+destiny.ip);
+    simulationLog.push_back("Start of Packet Transmission:");
+    simulationLog.push_back(" Origin: "+actual.ip);
+    simulationLog.push_back("Destiny: "+destiny.ip);
     simulationSteps.clear();
     simulationError = false;
 
@@ -334,7 +334,8 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
 
         if(actual.ip == destiny.ip){
             simulationSteps.push_back(actual.ip);
-            simulationLog.push_back("Salto("+to_string(TTL)+"): "+actual.ip);
+            simulationLog.push_back("-----------------------------");
+            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
             for(int i = 0; i<simulationSteps.size(); i++){
                 cout<<simulationSteps[i]<<endl;
             }
@@ -343,10 +344,11 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
 
         //Não possui Conexão
         if(actual.ip == "" || actual.ip == "0.0.0.0"){
+            cout<<"No connection"<<endl;
             simulationSteps.push_back(actual.ip);
             simulationLog.push_back("-----------------------------");
-            simulationLog.push_back("Sem conexão");
-            simulationLog.push_back("Salto("+to_string(TTL)+"): "+actual.ip);
+            simulationLog.push_back("No connection");
+            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
             TTL = 30;
             break;
         }
@@ -362,13 +364,17 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
             next = destiny;
         }
         //Se for um Roteador e o IP Destino não estiver na sua lista, siga para o roteador mais próximo
-        else if(GetNearestRouter(actual,previousRouter).type != "null"){
-            cout<<"go to nearest router, excluding the last"<<endl;
-            next = GetNearestRouter(actual,previousRouter);
-            previousRouter = actual.ip;
-        }else if(GetNearestRouter(actual,previousRouter).type == "null"){
-            cout<<"go to nearest router, including the last"<<endl;
-            next = GetNearestRouter(actual,"");
+        else if(aux.type != "null"){
+            cout<<"go to nearest router"<<endl;
+            next = aux;
+        }else if(aux.type == "null"){
+            cout<<"error"<<endl;
+            simulationSteps.push_back(actual.ip);
+            simulationLog.push_back("-----------------------------");
+            simulationLog.push_back("No connection");
+            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
+            TTL = 30;
+            break;
         }
         //Se não se encaixar em nenhuma característica anterior é porque está sem conexão
         else{
@@ -381,17 +387,18 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
         }
 
         simulationSteps.push_back(actual.ip);
+        aux = GetNextRouter(actual,simulationSteps);
         simulationLog.push_back("-----------------------------");
-        simulationLog.push_back("Salto("+to_string(TTL)+"): "+actual.ip);
+        simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
         actual = next;
     }
     if(TTL >= 30){
         simulationError = true;
         simulationLog.push_back("-----------------------------");
-        simulationLog.push_back("Destino Inacessivel");
+        simulationLog.push_back("Unreachable Destiny");
     }else{
         simulationLog.push_back("-----------------------------");
-        simulationLog.push_back("Pacote Transferido");
+        simulationLog.push_back("Package Transferred");
     }
     simulationLog.push_back("##############################");
 }
@@ -407,25 +414,46 @@ Object SimulationState::ObjectByIp(string ip){
     return nullObject;
 }
 
-Object SimulationState::GetNearestRouter(Object objReference,string ipToIgnore){
-    float nearestDistance = -1, faux;
-    int nearestID;
+Object SimulationState::GetNextRouter(Object objReference,vector<string> ipsToIgnore){
+    bool ignore = false;
+    float aux;
+    vector<Object> possibles;
 
     for(int i = 0; i<obj.size(); i++){
-        if(obj[i].type == "Router" && obj[i].ip != objReference.ip && obj[i].ip != ipToIgnore){
-            faux = sqrt(pow(obj[i].sprite.getPosition().x-objReference.sprite.getPosition().x,2)+pow(obj[i].sprite.getPosition().y-objReference.sprite.getPosition().y,2));
-            if(faux < nearestDistance || nearestDistance == -1){
-                nearestDistance = faux;
-                nearestID = i;
+        if(obj[i].type == "Router" && obj[i].ip != objReference.ip){
+            for(int j = 0; j<ipsToIgnore.size(); j++){
+                if(ipsToIgnore[j] == objReference.ip)
+                    continue;
+                cout<<ipsToIgnore[j]<<endl;
+                if(ipsToIgnore[j] == obj[i].ip){
+                    ignore = true;
+                    cout<<"Ignore "<<obj[i].ip<<endl;
+                    break;
+                }
             }
+
+            aux = sqrt(pow(obj[i].sprite.getPosition().x-objReference.sprite.getPosition().x,2)+pow(obj[i].sprite.getPosition().y-objReference.sprite.getPosition().y,2));
+            if(aux > obj[i].range.getRadius())
+                ignore = true;
+            else
+                ignore = false;
+
+            if(ignore == true){
+                ignore = false;
+                continue;
+            }
+
+            possibles.push_back(obj[i]);
         }
     }
-    if(nearestDistance == -1 || nearestDistance>objReference.range.getRadius()){
+
+    if(possibles.size() == 0){
         Object nullObject;
         nullObject.type = "null";
         return nullObject;
-    }else{
-        return obj[nearestID];
+    }
+    else{
+        return possibles[rand()%possibles.size()];
     }
 }
 
