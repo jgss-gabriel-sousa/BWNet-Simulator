@@ -4,7 +4,8 @@
 #define GAME_FRAMERATE 60
 #define SCREEN_WIDTH 800    //Pixels
 #define SCREEN_HEIGHT 600   //Pixels
-#define SHOW_CONSOLE 1
+#define SHOW_CONSOLE 0
+#define GENERATE_LOG 0
 
 //############################
 

@@ -2,22 +2,31 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <iostream>
 #include "Game.h"
 
 class Object{
     public:
-        Object(GameDataRef data,string type,string ip, sf::Sprite spriteRef);
+        Object(GameDataRef data,string type,string ip, string routerIp, sf::Sprite spriteRef);
+        Object(GameDataRef data,string ip, vector<string> ipsInRouter, sf::Sprite spriteRef);
+        Object(){};
         ~Object(){};
 
         void Draw();
         string Save();
+        bool IsInIpList(string);
+        string GetNewIP();
+        void ResetRouterIpTable();
 
-    private:
         GameDataRef _data;
 
         sf::Sprite sprite;
         sf::CircleShape range;
 
+        vector<string> ipsInRouter;
+        bool ipList[256];
+
         string ip;
+        string routerIp;
         string type;
 };
