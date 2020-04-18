@@ -8,7 +8,7 @@ int main(){
         ShowWindow(GetConsoleWindow(), SW_HIDE);
     }
 
-    Game(SCREEN_WIDTH,SCREEN_HEIGHT,"My Projecy in BEngine 0.2");
+    Game(SCREEN_WIDTH,SCREEN_HEIGHT,"BWNet Simulator");
 
     LogWrite();
     return EXIT_SUCCESS;

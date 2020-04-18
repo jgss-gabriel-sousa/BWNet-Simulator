@@ -1,4 +1,5 @@
 #include "Log.h"
+#include "DEFINITIONS.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -12,12 +13,14 @@ void LogPush(std::string text){
 }
 
 void LogWrite(){
-    std::ofstream file;
-    std::string line;
+    if(GENERATE_LOG){
+        std::ofstream file;
+        std::string line;
 
-    file.open("log.txt");
-    for(int i = 0; i < vectorLog.size(); ++i){
-        file<<vectorLog[i]<<std::endl;
+        file.open("log.txt");
+        for(int i = 0; i < vectorLog.size(); ++i){
+            file<<vectorLog[i]<<std::endl;
+        }
+        file.close();
     }
-    file.close();
 }

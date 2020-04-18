@@ -6,6 +6,10 @@ Game::Game(int width, int height, std::string title){
     _data->window.setFramerateLimit(GAME_FRAMERATE);
     _data->machine.AddState(StateRef(new LoadingState(this->_data)));
 
+    sf::Image icon;
+    icon.loadFromFile("resources/textures/icon.png");
+    _data->window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+
     this->Run();
 }
 
