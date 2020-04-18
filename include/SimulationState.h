@@ -21,7 +21,7 @@ public:
 
     void CreatePacket(string,sf::Vector2f);
     Object ObjectByIp(string);
-    Object GetNearestRouter(Object,string);
+    Object GetNextRouter(Object,vector<string>);
 
     void Simulation(string,string);
     void PacketMovement();
