@@ -110,3 +110,117 @@
 1577714097 source:d:\desktop\simulador redes\src\statemachine.cpp
 	"StateMachine.h"
 
+1623543119 source:d:\git\bwnet-simulator\src\assetmanager.cpp
+	"AssetManager.h"
+
+1623543119 d:\git\bwnet-simulator\include\assetmanager.h
+	<map>
+	<SFML/Graphics.hpp>
+	<SFML/Audio.hpp>
+	"DEFINITIONS.h"
+	"log.h"
+
+1623545114 d:\git\bwnet-simulator\include\definitions.h
+
+1623543119 d:\git\bwnet-simulator\include\log.h
+	<string>
+
+1623543119 source:d:\git\bwnet-simulator\src\editorstate.cpp
+	"EditorState.h"
+	"MainMenuState.h"
+
+1623543119 d:\git\bwnet-simulator\include\editorstate.h
+	<SFML/Graphics.hpp>
+	<fstream>
+	<iostream>
+	"State.h"
+	"Game.h"
+	"Object.h"
+
+1623543119 d:\git\bwnet-simulator\include\state.h
+
+1623543119 d:\git\bwnet-simulator\include\game.h
+	<memory>
+	<string>
+	<SFML/Graphics.hpp>
+	<sstream>
+	"log.h"
+	"StateMachine.h"
+	"AssetManager.h"
+	"InputManager.h"
+	"DEFINITIONS.h"
+
+1623543119 d:\git\bwnet-simulator\include\statemachine.h
+	<memory>
+	<stack>
+	"State.h"
+
+1623543119 d:\git\bwnet-simulator\include\inputmanager.h
+	<SFML/Graphics.hpp>
+
+1623543119 d:\git\bwnet-simulator\include\object.h
+	<SFML/Graphics.hpp>
+	<string>
+	<iostream>
+	"Game.h"
+
+1623543119 d:\git\bwnet-simulator\include\mainmenustate.h
+	<SFML/Graphics.hpp>
+	<fstream>
+	<cstdio>
+	"State.h"
+	"Game.h"
+
+1623543119 source:d:\git\bwnet-simulator\src\game.cpp
+	"Game.h"
+	"LoadingState.h"
+
+1623543119 d:\git\bwnet-simulator\include\loadingstate.h
+	<SFML/Graphics.hpp>
+	<fstream>
+	"State.h"
+	"Game.h"
+
+1623543119 source:d:\git\bwnet-simulator\src\inputmanager.cpp
+	"InputManager.h"
+
+1623543119 source:d:\git\bwnet-simulator\src\loadingstate.cpp
+	"LoadingState.h"
+	"MainMenuState.h"
+
+1623543119 source:d:\git\bwnet-simulator\src\log.cpp
+	"Log.h"
+	"DEFINITIONS.h"
+	<vector>
+	<string>
+	<iostream>
+	<fstream>
+
+1623543119 source:d:\git\bwnet-simulator\src\main.cpp
+	"Game.h"
+	"DEFINITIONS.h"
+	<windows.h>
+
+1623545984 source:d:\git\bwnet-simulator\src\mainmenustate.cpp
+	"MainMenuState.h"
+	"EditorState.h"
+	"SimulationState.h"
+
+1623543119 d:\git\bwnet-simulator\include\simulationstate.h
+	<SFML/Graphics.hpp>
+	<fstream>
+	<iostream>
+	"State.h"
+	"Game.h"
+	"Object.h"
+
+1623543119 source:d:\git\bwnet-simulator\src\object.cpp
+	"Object.h"
+
+1623545044 source:d:\git\bwnet-simulator\src\simulationstate.cpp
+	"SimulationState.h"
+	"MainMenuState.h"
+
+1623543119 source:d:\git\bwnet-simulator\src\statemachine.cpp
+	"StateMachine.h"
+

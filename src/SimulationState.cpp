@@ -329,7 +329,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
         cout<<simulationLog[i]<<endl;
     }
 
-    while(TTL++ < 30){
+    while(TTL++ < 64){
         cout<<"Salto ("<<TTL<<"): "<<actual.ip<<","<<actual.type<<endl;
 
         if(actual.ip == destiny.ip){
@@ -354,7 +354,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
         }
         //Se não for um roteador e não estiver no fim da rede, então siga para o Roteador conectado
         else if(actual.type != "Router"){
-            cout<<"forwarding to my router"<<endl;
+            cout<<"forwarding to router"<<endl;
             next = ObjectByIp(actual.routerIp);
         }
         //Se for um Roteador e o IP Destino estiver na sua lista, o próximo salto será o destino
@@ -378,7 +378,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
         }
         //Se não se encaixar em nenhuma característica anterior é porque está sem conexão
         else{
-            cout<<"not connection"<<endl;
+            cout<<"without connection"<<endl;
             next = actual;
             simulationSteps.push_back(actual.ip);
             simulationLog.push_back("-----------------------------");
