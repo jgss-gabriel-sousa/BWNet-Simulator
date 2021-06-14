@@ -7,26 +7,6 @@
 		<Option compiler="gcc" />
 		<Option virtualFolders="States\;" />
 		<Build>
-			<Target title="Debug">
-				<Option output="bin/Debug/sfml test" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-std=c++14" />
-					<Add option="-g" />
-					<Add directory="D:/SFML-2.5.1/include" />
-					<Add directory="include" />
-				</Compiler>
-				<Linker>
-					<Add library="sfml-graphics-d" />
-					<Add library="sfml-audio-d" />
-					<Add library="sfml-network-d" />
-					<Add library="sfml-window-d" />
-					<Add library="sfml-system-d" />
-					<Add directory="D:/SFML-2.5.1/lib" />
-				</Linker>
-			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/sfml test" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
@@ -64,6 +44,9 @@
 			<Option virtualFolder="States/" />
 		</Unit>
 		<Unit filename="include/Object.h" />
+		<Unit filename="include/SimulationState.h">
+			<Option virtualFolder="States/" />
+		</Unit>
 		<Unit filename="include/State.h" />
 		<Unit filename="include/StateMachine.h" />
 		<Unit filename="sfml-audio-2.dll" />
@@ -90,6 +73,9 @@
 			<Option virtualFolder="States/" />
 		</Unit>
 		<Unit filename="src/Object.cpp" />
+		<Unit filename="src/SimulationState.cpp">
+			<Option virtualFolder="States/" />
+		</Unit>
 		<Unit filename="src/StateMachine.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
