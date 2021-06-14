@@ -277,7 +277,7 @@ void EditorState::Save(){
     }
 
     if(newSimulation){
-        file2.open("simulations/saveList.txt",ios_base::app);
+        file2.open("simulations/saveConfig.dat",ios_base::app);
         file2<<projectName<<endl;
         newSimulation = false;
     }
