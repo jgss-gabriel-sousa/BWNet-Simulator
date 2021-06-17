@@ -50,15 +50,9 @@
 		<Unit filename="include/State.h" />
 		<Unit filename="include/StateMachine.h" />
 		<Unit filename="sfml-audio-2.dll" />
-		<Unit filename="sfml-audio-d-2.dll" />
 		<Unit filename="sfml-graphics-2.dll" />
-		<Unit filename="sfml-graphics-d-2.dll" />
-		<Unit filename="sfml-network-2.dll" />
-		<Unit filename="sfml-network-d-2.dll" />
 		<Unit filename="sfml-system-2.dll" />
-		<Unit filename="sfml-system-d-2.dll" />
 		<Unit filename="sfml-window-2.dll" />
-		<Unit filename="sfml-window-d-2.dll" />
 		<Unit filename="src/AssetManager.cpp" />
 		<Unit filename="src/EditorState.cpp">
 			<Option virtualFolder="States/" />
