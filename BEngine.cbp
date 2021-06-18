@@ -44,6 +44,7 @@
 			<Option virtualFolder="States/" />
 		</Unit>
 		<Unit filename="include/Object.h" />
+		<Unit filename="include/Packet.h" />
 		<Unit filename="include/SimulationState.h">
 			<Option virtualFolder="States/" />
 		</Unit>
@@ -67,6 +68,7 @@
 			<Option virtualFolder="States/" />
 		</Unit>
 		<Unit filename="src/Object.cpp" />
+		<Unit filename="src/Packet.cpp" />
 		<Unit filename="src/SimulationState.cpp">
 			<Option virtualFolder="States/" />
 		</Unit>

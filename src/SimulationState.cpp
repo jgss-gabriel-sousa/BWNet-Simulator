@@ -112,7 +112,7 @@ void SimulationState::HandleInput(){
         }
         */
         showStatsWindow = false;
-        for(int i = 0; i<obj.size(); i++){
+        for(int i = 0; i < obj.size(); i++){
             if(_data->input.IsOverSprite(obj[i].sprite,_data->window)){
                 statsText[0].setString("IP: "+obj[i].ip);
                 if(obj[i].type != "Router")
@@ -236,9 +236,15 @@ void SimulationState::Update(float dt){
 
     simulationSpeedText.setString("Simulation Speed: "+to_string(simulationSpeed));
     simulationSpeedText.setPosition(SCREEN_WIDTH/2-simulationSpeedText.getGlobalBounds().width/2,2);
+
+    //Packets Update
+
+    for(int i = 0; i < packets.size(); i++){
+        ;
+    }
 }
 
-void SimulationState::CreatePacket(string action,sf::Vector2f point){
+void SimulationState::CreatePacket(string action, sf::Vector2f point){
     if(action == "delete"){
         creatingPackage = false;
         creatingPackageDestiny = false;
@@ -250,17 +256,17 @@ void SimulationState::CreatePacket(string action,sf::Vector2f point){
         creatingPackageDestiny = true;
         playButtonVisible = true;
         packetMovementAnimation = false;
-        packetSimulated.setPosition(0,-80);
-        packetLine[0] = sf::Vertex(point,sf::Color::Green);
+        packetSimulated.setPosition(0, -80);
+        packetLine[0] = sf::Vertex(point, sf::Color::Green);
         auxClock.restart();
     }
-    else if(action == "destiny" && auxClock.getElapsedTime().asSeconds()>1){
+    else if(action == "destiny" && auxClock.getElapsedTime().asSeconds() > 1){
         creatingPackageDestiny = false;
         creatingPackage = false;
         showPacketLine = true;
-        Simulation(origin,destiny);
+        Simulation(origin, destiny);
         playButtonVisible = true;
-        packetLine[1] = sf::Vertex(point,sf::Color::Green);
+        packetLine[1] = sf::Vertex(point, sf::Color::Green);
         helpText.setString("");
     }
 }
@@ -269,7 +275,7 @@ void SimulationState::PacketMovement(){
     sf::Vector2f targetPos = ObjectByIp(simulationSteps[actualSimulationStep]).sprite.getPosition();
     sf::Vector2f actualPos = packetSimulated.getPosition();
     float movSpeed = simulationSpeed;
-    float distance = sqrt(pow(targetPos.x-actualPos.x,2)+pow(targetPos.y-actualPos.y,2));
+    float distance = sqrt(pow(targetPos.x-actualPos.x, 2) + pow(targetPos.y-actualPos.y, 2));
 
     if(distance < 10){
         actualSimulationStep++;
@@ -325,7 +331,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     simulationSteps.clear();
     simulationError = false;
 
-    for(int i = 0; i<simulationLog.size(); i++){
+    for(int i = 0; i < simulationLog.size(); i++){
         cout<<simulationLog[i]<<endl;
     }
 
@@ -358,11 +364,21 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
             next = ObjectByIp(actual.routerIp);
         }
         //Se for um Roteador e o IP Destino estiver na sua lista, o próximo salto será o destino
-        //else if(actual.IsInIpList(destiny.ip)){
         else if(actual.ip == destiny.routerIp){
             cout<<"router, connected with destiny"<<endl;
             next = destiny;
         }
+
+        /*
+        //Se for um Roteador deve buscar uma rota na tabela de roteamento. Se não houver, fará o Flooding da rede.
+        else if(actual.type == "Router"){
+            cout<<"router, searching in routing table"<<endl;
+            ;
+            Flooding();
+            next = ObjectByIp(actual.routerIp);
+        }
+        */
+
         //Se for um Roteador e o IP Destino não estiver na sua lista, siga para o roteador mais próximo
         else if(aux.type != "null"){
             cout<<"go to nearest router"<<endl;
@@ -376,6 +392,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
             TTL = 30;
             break;
         }
+
         //Se não se encaixar em nenhuma característica anterior é porque está sem conexão
         else{
             cout<<"without connection"<<endl;
@@ -392,7 +409,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
         simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
         actual = next;
     }
-    if(TTL >= 30){
+    if(TTL >= 64){
         simulationError = true;
         simulationLog.push_back("-----------------------------");
         simulationLog.push_back("Unreachable Destiny");
@@ -401,6 +418,24 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
         simulationLog.push_back("Package Transferred");
     }
     simulationLog.push_back("##############################");
+}
+
+void UpdateRoutingTables(){
+    vector routers;
+    Object router;
+
+    for(int i = 0; i < obj.size(); i++){
+        if(obj[i].type == "router"){
+            routers.push_back(obj[i].ip);
+        }
+    }
+
+    for(int i = 0; i < routers.size(); i++){
+        router = ObjectByIp(routers[i]);
+        for(){
+            ;
+        }
+    }
 }
 
 Object SimulationState::ObjectByIp(string ip){
@@ -456,6 +491,19 @@ Object SimulationState::GetNextRouter(Object objReference,vector<string> ipsToIg
         return possibles[rand()%possibles.size()];
     }
 }
+
+
+void SimulationState::NewBroadcast(*Object source, string destination, string data, string type){
+    Packet p;
+
+    p.source = *source.ip;
+    p.destination = destination;
+    p.data = data;
+    p.type = type;
+
+    packets.push_back(p);
+}
+
 
 void SimulationState::Load(){
     std::ifstream file;

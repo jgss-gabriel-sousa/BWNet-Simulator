@@ -9,7 +9,7 @@ Object::Object(GameDataRef data, string type, string ip, string routerIp, sf::Sp
     sprite.setScale(0.5,0.5);
 }
 
-Object::Object(GameDataRef data,string ip, vector<string> ipsAggregates, sf::Sprite spriteRef) : _data(data){
+Object::Object(GameDataRef data, string ip, vector<string> ipsAggregates, sf::Sprite spriteRef) : _data(data){
     sprite = spriteRef;
     type = "Router";
     this->ip = ip;
@@ -62,10 +62,23 @@ string Object::GetNewIP(){
 }
 
 void Object::ResetRouterIpTable(){
-    for(int i = 0; i<256; i++){
+    for(int i = 0; i < 256; i++){
         ipList[i] = true;
     }
 }
+
+/*
+string Object::SearchInRouterTable(string ipToSearch){
+    string nextHop = "0.0.0.0";
+
+    for(int i = 0; i < RoutingTable.size(); i++){
+        if(RoutingTable[i] == ipToSearch){
+            ;
+        }
+    }
+    return nextHop;
+}
+*/
 
 string Object::Save(){
     string aux = type+";"+ip+";"+routerIp+";"+to_string(sprite.getPosition().x)+","+to_string(sprite.getPosition().y);

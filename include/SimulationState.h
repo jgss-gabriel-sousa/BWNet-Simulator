@@ -7,6 +7,7 @@
 #include "State.h"
 #include "Game.h"
 #include "Object.h"
+#include "Packet.h"
 
 class SimulationState : public State{
 public:
@@ -21,7 +22,8 @@ public:
 
     void CreatePacket(string,sf::Vector2f);
     Object ObjectByIp(string);
-    Object GetNextRouter(Object,vector<string>);
+    Object GetNextRouter(Object, vector<string>);
+    void NewBroadcast(*Object source, string destination, string data, string type);
 
     void Simulation(string,string);
     void PacketMovement();
@@ -33,13 +35,14 @@ private:
     GameDataRef _data;
 
     vector<Object> obj;
+    vector<Packet> packets;
     vector<string> simulationLog;
     vector<string> simulationSteps;
     int actualSimulationStep;
     bool packetMovementAnimation = false;
     bool playButtonVisible = false;
     bool simulationError = false;
-    string origin,destiny;
+    string origin, destiny;
     sf::RectangleShape simulationSpeedBar;
     sf::Sprite simulationSpeedPointer;
     sf::Text simulationSpeedText;
