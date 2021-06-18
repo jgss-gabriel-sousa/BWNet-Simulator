@@ -7,9 +7,11 @@ SimulationState::SimulationState(GameDataRef data,string projectName) : _data(da
     Load();
 }
 
+
 SimulationState::~SimulationState(){
     SaveLog();
 }
+
 
 void SimulationState::Init(){
     background.setTexture(_data->assets.GetTexture("background"));
@@ -56,6 +58,7 @@ void SimulationState::Init(){
     helpText.setOutlineThickness(1);
     auxClock.restart();
 }
+
 
 void SimulationState::HandleInput(){
     sf::Event event;
@@ -204,6 +207,7 @@ void SimulationState::HandleInput(){
     }
 }
 
+
 void SimulationState::Update(float dt){
     if(movingCamera){
         objView.setCenter(sf::Vector2f(_data->window.mapPixelToCoords(sf::Vector2i(sf::Mouse::getPosition()))));
@@ -244,6 +248,7 @@ void SimulationState::Update(float dt){
     }
 }
 
+
 void SimulationState::CreatePacket(string action, sf::Vector2f point){
     if(action == "delete"){
         creatingPackage = false;
@@ -270,6 +275,7 @@ void SimulationState::CreatePacket(string action, sf::Vector2f point){
         helpText.setString("");
     }
 }
+
 
 void SimulationState::PacketMovement(){
     sf::Vector2f targetPos = ObjectByIp(simulationSteps[actualSimulationStep]).sprite.getPosition();
@@ -305,6 +311,7 @@ void SimulationState::PacketMovement(){
                                     packetSimulated.getPosition().y - movSpeed);
     }
 }
+
 
 void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     Object destiny;
@@ -420,6 +427,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     simulationLog.push_back("##############################");
 }
 
+
 void UpdateRoutingTables(){
     vector routers;
     Object router;
@@ -438,6 +446,7 @@ void UpdateRoutingTables(){
     }
 }
 
+
 Object SimulationState::ObjectByIp(string ip){
     for(int i = 0; i<obj.size(); i++){
         if(obj[i].ip == ip)
@@ -448,6 +457,7 @@ Object SimulationState::ObjectByIp(string ip){
     nullObject.type = "null";
     return nullObject;
 }
+
 
 Object SimulationState::GetNextRouter(Object objReference,vector<string> ipsToIgnore){
     bool ignore = false;
@@ -559,6 +569,7 @@ void SimulationState::Load(){
     }
 }
 
+
 void SimulationState::SaveLog(){
     ofstream file;
 
@@ -568,6 +579,7 @@ void SimulationState::SaveLog(){
         file<<simulationLog[i]<<endl;
     }
 }
+
 
 void SimulationState::Draw(float dt){
     _data->window.clear();
@@ -602,10 +614,3 @@ void SimulationState::Draw(float dt){
 
     _data->window.display();
 }
-
-
-
-
-
-
-
