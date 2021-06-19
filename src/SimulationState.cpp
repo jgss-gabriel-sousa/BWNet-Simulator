@@ -241,8 +241,11 @@ void SimulationState::Update(float dt){
     simulationSpeedText.setString("Simulation Speed: "+to_string(simulationSpeed));
     simulationSpeedText.setPosition(SCREEN_WIDTH/2-simulationSpeedText.getGlobalBounds().width/2,2);
 
-    //Packets Update
+    PacketUpdate();
+}
 
+
+void SimulationState::PacketUpdate(){
     for(int i = 0; i < packets.size(); i++){
         ;
     }
@@ -507,6 +510,7 @@ void SimulationState::NewBroadcast(*Object source, string destination, string da
     Packet p;
 
     p.source = *source.ip;
+    p.actual = *source.ip;
     p.destination = destination;
     p.data = data;
     p.type = type;

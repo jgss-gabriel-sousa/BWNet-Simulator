@@ -61,14 +61,15 @@ string Object::GetNewIP(){
     return "0.0.0.0";
 }
 
+
 void Object::ResetRouterIpTable(){
     for(int i = 0; i < 256; i++){
         ipList[i] = true;
     }
 }
 
-/*
-string Object::SearchInRouterTable(string ipToSearch){
+
+string Object::GetNextHop(string ipToSearch){
     string nextHop = "0.0.0.0";
 
     for(int i = 0; i < RoutingTable.size(); i++){
@@ -78,7 +79,7 @@ string Object::SearchInRouterTable(string ipToSearch){
     }
     return nextHop;
 }
-*/
+
 
 string Object::Save(){
     string aux = type+";"+ip+";"+routerIp+";"+to_string(sprite.getPosition().x)+","+to_string(sprite.getPosition().y);

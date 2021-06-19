@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include "Game.h"
+#include "Packet.h"
 
 class Object{
     public:
@@ -28,6 +29,8 @@ class Object{
         bool ipList[256];
 
         vector<string> RoutingTable;
+
+        vector<Packet> packetInterface;
 
         string ip;
         string routerIp;

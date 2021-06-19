@@ -7,7 +7,6 @@
 #include "State.h"
 #include "Game.h"
 #include "Object.h"
-#include "Packet.h"
 
 class SimulationState : public State{
 public:
@@ -22,11 +21,11 @@ public:
 
     void CreatePacket(string,sf::Vector2f);
     Object ObjectByIp(string);
-    Object GetNextRouter(Object, vector<string>);
-    void NewBroadcast(*Object source, string destination, string data, string type);
+    Object GetNextRouter(Object,vector<string>);
+    void NewBroadcast(*Object,string,string,string);
 
     void Simulation(string,string);
-    void PacketMovement();
+    void PacketUpdate();
 
     void Load();
     void SaveLog();
