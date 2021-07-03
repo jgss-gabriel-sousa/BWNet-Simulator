@@ -181,7 +181,7 @@ void EditorState::AddObject(){
         }
     }
 
-    for(int i = 0; i<obj.size(); i++){
+    for(int i = 0; i < obj.size(); i++){
         if(obj[i].type == "Router"){
             obj[i].ipsInRouter.clear();
             for(int j = 0;j<obj.size();j++){

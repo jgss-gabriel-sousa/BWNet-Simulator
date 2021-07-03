@@ -22,10 +22,13 @@ public:
     void CreatePacket(string,sf::Vector2f);
     Object ObjectByIp(string);
     Object GetNextRouter(Object,vector<string>);
-    void NewBroadcast(*Object,string,string,string);
+    void UpdateRoutingTables();
 
     void Simulation(string,string);
-    void PacketUpdate();
+    void PacketMovement();
+
+    float Distance(sf::Vector2f, sf::Vector2f);
+    float Distance(sf::Sprite, sf::Sprite);
 
     void Load();
     void SaveLog();
@@ -34,7 +37,7 @@ private:
     GameDataRef _data;
 
     vector<Object> obj;
-    vector<Packet> packets;
+    //vector<Packet> packets;
     vector<string> simulationLog;
     vector<string> simulationSteps;
     int actualSimulationStep;

@@ -4,7 +4,6 @@
 #include <string>
 #include <iostream>
 #include "Game.h"
-#include "Packet.h"
 
 class Object{
     public:
@@ -18,6 +17,7 @@ class Object{
         bool IsInIpList(string);
         string GetNewIP();
         void ResetRouterIpTable();
+        void UpdateTable(vector<pair<string,string>>);
         sf::Vector2f GetPosition(){return sprite.getPosition();}
 
         GameDataRef _data;
@@ -29,8 +29,6 @@ class Object{
         bool ipList[256];
 
         vector<string> RoutingTable;
-
-        vector<Packet> packetInterface;
 
         string ip;
         string routerIp;

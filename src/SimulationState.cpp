@@ -70,50 +70,11 @@ void SimulationState::HandleInput(){
         if(_data->input.IsSpriteClicked(closeButton,sf::Mouse::Left,_data->window)){
             if(auxClock.getElapsedTime().asSeconds() > 1){
                 SaveLog();
-                _data->machine.AddState(StateRef(new MainMenuState(_data)),true);
                 _data->assets.PlayAudio("click");
+                _data->machine.AddState(StateRef(new MainMenuState(_data)),true);
             }
         }
 
-        /*
-        MOVIMENTAÇÃO DA CÂMERA
-        Provoca Bugs com as Views
-        Possível Solução: Alterar método IsOverObject no input manager para reconhecer a View em uso
-
-        if(event.type == sf::Event::MouseWheelMoved){
-            if(event.mouseWheel.delta < 0){
-                objView.zoom(1.05);
-            }
-            if(event.mouseWheel.delta > 0){
-                objView.zoom(0.95);
-            }
-        }
-
-        if(event.type == sf::Event::MouseButtonPressed){
-            if(event.mouseButton.button == sf::Mouse::Right){
-                movingCamera = true;
-                cursor.loadFromSystem(sf::Cursor::Hand);
-                _data->window.setMouseCursor(cursor);
-            }
-        }else if(event.type == sf::Event::MouseButtonReleased){
-            if(event.mouseButton.button == sf::Mouse::Right){
-                movingCamera = false;
-                cursor.loadFromSystem(sf::Cursor::Arrow);
-                _data->window.setMouseCursor(cursor);
-            }
-        }
-
-        if(event.type == sf::Event::KeyPressed){
-            if(event.key.code == sf::Keyboard::Left)
-                objView.setCenter(objView.getCenter().x-5,objView.getCenter().y);
-            if(event.key.code == sf::Keyboard::Right)
-                objView.setCenter(objView.getCenter().x+5,objView.getCenter().y);
-            if(event.key.code == sf::Keyboard::Up)
-                objView.setCenter(objView.getCenter().x,objView.getCenter().y-5);
-            if(event.key.code == sf::Keyboard::Down)
-                objView.setCenter(objView.getCenter().x,objView.getCenter().y+5);
-        }
-        */
         showStatsWindow = false;
         for(int i = 0; i < obj.size(); i++){
             if(_data->input.IsOverSprite(obj[i].sprite,_data->window)){
@@ -241,14 +202,7 @@ void SimulationState::Update(float dt){
     simulationSpeedText.setString("Simulation Speed: "+to_string(simulationSpeed));
     simulationSpeedText.setPosition(SCREEN_WIDTH/2-simulationSpeedText.getGlobalBounds().width/2,2);
 
-    PacketUpdate();
-}
-
-
-void SimulationState::PacketUpdate(){
-    for(int i = 0; i < packets.size(); i++){
-        ;
-    }
+    UpdateRoutingTables();
 }
 
 
@@ -431,21 +385,28 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
 }
 
 
-void UpdateRoutingTables(){
-    vector routers;
-    Object router;
+void SimulationState::UpdateRoutingTables(){
+    vector<pair<string,string>> newTable;
 
     for(int i = 0; i < obj.size(); i++){
-        if(obj[i].type == "router"){
-            routers.push_back(obj[i].ip);
-        }
-    }
+        if(obj[i].type != "router")
+            continue;
 
-    for(int i = 0; i < routers.size(); i++){
-        router = ObjectByIp(routers[i]);
-        for(){
-            ;
+        newTable.clear();
+
+        for(int j = 0; j < obj.size(); j++){
+            if(obj[j].ip == obj[i].ip)
+                continue;
+            if(Distance(obj[i].sprite, obj[j].sprite) <= obj[i].range.getRadius()){
+                newTable.push_back(make_pair<obj[j].ip, "linked">);
+
+                for(int k = 0; k < obj[j].RoutingTable.size(); k++){
+                    newTable.push_back(make_pair<obj[j].RoutingTable[k], obj[j].ip>);
+                }
+            }
         }
+
+        obj[i].UpdateTable(newTable);
     }
 }
 
@@ -480,7 +441,8 @@ Object SimulationState::GetNextRouter(Object objReference,vector<string> ipsToIg
                 }
             }
 
-            aux = sqrt(pow(obj[i].sprite.getPosition().x-objReference.sprite.getPosition().x,2)+pow(obj[i].sprite.getPosition().y-objReference.sprite.getPosition().y,2));
+            aux = Distance(obj[i].sprite, objReference.sprite);
+
             if(aux > obj[i].range.getRadius())
                 ignore = true;
             else
@@ -506,16 +468,12 @@ Object SimulationState::GetNextRouter(Object objReference,vector<string> ipsToIg
 }
 
 
-void SimulationState::NewBroadcast(*Object source, string destination, string data, string type){
-    Packet p;
+float Distance(sf::Vector2f a, sf::Vector2f b){
+    return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
+}
 
-    p.source = *source.ip;
-    p.actual = *source.ip;
-    p.destination = destination;
-    p.data = data;
-    p.type = type;
-
-    packets.push_back(p);
+float Distance(sf::Sprite a, sf::Sprite b){
+    return sqrt(pow(a.getPosition().x - b.getPosition().x, 2) + pow(a.getPosition().y - b.getPosition().y, 2));
 }
 
 
