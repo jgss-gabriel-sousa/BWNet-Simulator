@@ -25,7 +25,7 @@ public:
 
     void CreatePacket(string,sf::Vector2f);
     Object ObjectByIp(string);
-    Object GetNextRouter(Object,vector<string>);
+    Object* ObjectRefByIp(string);
     void UpdateRoutingTables();
 
     void Simulation(string,string);

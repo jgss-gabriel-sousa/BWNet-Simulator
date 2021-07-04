@@ -57,6 +57,8 @@ void SimulationState::Init(){
     helpText.setOutlineColor(sf::Color::White);
     helpText.setOutlineThickness(1);
     auxClock.restart();
+    UpdateRoutingTables();
+    UpdateRoutingTables();
 }
 
 
@@ -101,16 +103,14 @@ void SimulationState::HandleInput(){
             bool aux = false;
             for(int i = 0; i < obj.size(); i++){
                 if(_data->input.IsSpriteClicked(obj[i].sprite,sf::Mouse::Left,_data->window)){
-                    if(obj[i].type != "Router"){
-                        sf::Sprite spriteAux = obj[i].sprite;
+                    sf::Sprite spriteAux = obj[i].sprite;
 
-                        origin = obj[i].ip;
-                        CreatePacket("origin",sf::Vector2f(spriteAux.getPosition().x+spriteAux.getGlobalBounds().width/2,
-                                                            spriteAux.getPosition().y+spriteAux.getGlobalBounds().height/2));
-                        helpText.setString("Select Destination");
-                        aux = true;
-                        break;
-                    }
+                    origin = obj[i].ip;
+                    CreatePacket("origin",sf::Vector2f(spriteAux.getPosition().x+spriteAux.getGlobalBounds().width/2,
+                                                        spriteAux.getPosition().y+spriteAux.getGlobalBounds().height/2));
+                    helpText.setString("Select Destination");
+                    aux = true;
+                    break;
                 }
             }
             if(aux == false){
@@ -197,7 +197,7 @@ void SimulationState::Update(float dt){
 
     pointerPos = simulationSpeedPointer.getPosition().x - 300;
     larguraBox = simulationSpeedBar.getPosition().x+simulationSpeedBar.getGlobalBounds().width - 300;
-    simulationSpeed = (pow(pointerPos,2)/pow(larguraBox,2))/0.25;
+    simulationSpeed = (pow(pointerPos,2)/pow(larguraBox,2))/0.5;
 
     simulationSpeedText.setString("Simulation Speed: "+to_string(simulationSpeed));
     simulationSpeedText.setPosition(SCREEN_WIDTH/2-simulationSpeedText.getGlobalBounds().width/2,2);
@@ -279,33 +279,74 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     Object actual;
     Object next;
     Object aux;
-    int TTL = 0;
-    actualSimulationStep = 0;
+    unsigned char TTL = 0;
+    vector<string> route;
 
     packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmall"));
 
     if(ObjectByIp(ipOrigin).type != "null"){
         actual = ObjectByIp(ipOrigin);
-    }else
-        return;
-    if(ObjectByIp(ipDestiny).type != "null"){
-        destiny = ObjectByIp(ipDestiny);
-    }else
+    }
+    else
         return;
 
-    simulationLog.push_back("Start of Packet Transmission:");
+    if(ObjectByIp(ipDestiny).type != "null"){
+        destiny = ObjectByIp(ipDestiny);
+    }
+    else
+        return;
+
+    simulationLog.push_back("##############################");
     simulationLog.push_back(" Origin: "+actual.ip);
     simulationLog.push_back("Destiny: "+destiny.ip);
+    simulationLog.push_back("");
     simulationSteps.clear();
     simulationError = false;
 
-    for(int i = 0; i < simulationLog.size(); i++){
-        cout<<simulationLog[i]<<endl;
+    string fullRoute;
+    if(actual.type != "Router")
+        fullRoute = ObjectRefByIp(actual.routerIp)->GetRoute(ipDestiny);
+    else
+        fullRoute = ObjectRefByIp(actual.ip)->GetRoute(ipDestiny);
+
+
+    if(fullRoute != "error"){
+        route.push_back(actual.ip);
+
+        if(actual.type != "Router")
+            route.push_back(actual.routerIp);
+
+        while(fullRoute != "L"){
+            route.push_back(fullRoute.substr(0,fullRoute.find("-")));
+            fullRoute = fullRoute.substr(fullRoute.find("-")+1);
+        }
+        route.push_back(destiny.ip);
     }
 
-    while(TTL++ < 64){
-        cout<<"Salto ("<<TTL<<"): "<<actual.ip<<","<<actual.type<<endl;
 
+    while(TTL++ < 64){
+        if(route.size() == 0 && TTL == 1){
+            cout<<"No connection"<<endl;
+            simulationSteps.push_back(actual.ip);
+            simulationLog.push_back("-----------------------------");
+            simulationLog.push_back("No connection");
+            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
+            TTL = 64;
+            break;
+        }
+
+
+        simulationSteps.push_back(route[0]);
+        cout<<route[0]<<endl;
+        simulationLog.push_back("Hop("+to_string(TTL)+"): "+route[0]);
+        route.erase(route.begin());
+
+        if(route.size() == 0)
+            break;
+
+        //simulationSteps = route;
+
+        /*
         if(actual.ip == destiny.ip){
             simulationSteps.push_back(actual.ip);
             simulationLog.push_back("-----------------------------");
@@ -346,7 +387,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
             next = ObjectByIp(actual.routerIp);
         }
         */
-
+        /*
         //Se for um Roteador e o IP Destino não estiver na sua lista, siga para o roteador mais próximo
         else if(aux.type != "null"){
             cout<<"go to nearest router"<<endl;
@@ -376,6 +417,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
         simulationLog.push_back("-----------------------------");
         simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
         actual = next;
+        */
     }
     if(TTL >= 64){
         simulationError = true;
@@ -385,7 +427,6 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
         simulationLog.push_back("-----------------------------");
         simulationLog.push_back("Package Transferred");
     }
-    simulationLog.push_back("##############################");
 }
 
 
@@ -399,9 +440,6 @@ void SimulationState::UpdateRoutingTables(){
         newTable.clear();
 
         for(int j = 0; j < obj.size(); j++){
-            if(obj[j].ip == obj[i].ip)
-                continue;
-
             if(Distance(obj[i].sprite, obj[j].sprite) <= obj[i].range.getRadius()){
                 newTable.push_back(make_pair(obj[j].ip, "L"));
 
@@ -413,11 +451,13 @@ void SimulationState::UpdateRoutingTables(){
 
         obj[i].UpdateTable(newTable);
 
+        /*
         cout<<"####################"<<endl;
         cout<<obj[i].ip+" Routing Table \n"<<endl;
         for(int l = 0; l < obj[i].RoutingTable.size(); l++){
             cout<<obj[i].RoutingTable[l].first+": "+obj[i].RoutingTable[l].second<<endl;
         }
+        */
     }
 }
 
@@ -434,48 +474,12 @@ Object SimulationState::ObjectByIp(string ip){
 }
 
 
-Object SimulationState::GetNextRouter(Object objReference,vector<string> ipsToIgnore){
-    bool ignore = false;
-    float aux;
-    vector<Object> possibles;
-
+Object* SimulationState::ObjectRefByIp(string ip){
     for(int i = 0; i<obj.size(); i++){
-        if(obj[i].type == "Router" && obj[i].ip != objReference.ip){
-            for(int j = 0; j<ipsToIgnore.size(); j++){
-                if(ipsToIgnore[j] == objReference.ip)
-                    continue;
-                cout<<ipsToIgnore[j]<<endl;
-                if(ipsToIgnore[j] == obj[i].ip){
-                    ignore = true;
-                    cout<<"Ignore "<<obj[i].ip<<endl;
-                    break;
-                }
-            }
-
-            aux = Distance(obj[i].sprite, objReference.sprite);
-
-            if(aux > obj[i].range.getRadius())
-                ignore = true;
-            else
-                ignore = false;
-
-            if(ignore == true){
-                ignore = false;
-                continue;
-            }
-
-            possibles.push_back(obj[i]);
-        }
+        if(obj[i].ip == ip)
+            return &obj[i];
     }
-
-    if(possibles.size() == 0){
-        Object nullObject;
-        nullObject.type = "null";
-        return nullObject;
-    }
-    else{
-        return possibles[rand()%possibles.size()];
-    }
+    return nullptr;
 }
 
 
@@ -495,7 +499,7 @@ void SimulationState::Load(){
     sf::Sprite spriteAux;
     vector<string> ipList;
 
-    file.open("simulations/"+projectName+".txt");
+    file.open("simulations/"+projectName+".sim");
 
     while(!file.eof() && !file.bad()){
         getline(file,line);

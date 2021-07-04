@@ -88,6 +88,16 @@ void Object::UpdateTable(vector<pair<string,string>> newTable){
 }
 
 
+string Object::GetRoute(string destinyIP){
+    for(int i = 0; i < RoutingTable.size(); i++){
+        if(RoutingTable[i].first == destinyIP){
+            return RoutingTable[i].second;
+        }
+    }
+    return "error";
+}
+
+
 string Object::Save(){
     string aux = type+";"+ip+";"+routerIp+";"+to_string(sprite.getPosition().x)+","+to_string(sprite.getPosition().y);
 

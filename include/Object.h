@@ -20,6 +20,7 @@ class Object{
         void ResetRouterIpTable();
         void UpdateTable(vector<pair<string,string>>);
         sf::Vector2f GetPosition(){return sprite.getPosition();}
+        string GetRoute(string);
 
         GameDataRef _data;
 

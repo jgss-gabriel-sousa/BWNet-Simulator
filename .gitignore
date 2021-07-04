@@ -1,5 +1,6 @@
 *.exe
 *.o
 *.ini
-*.txt
 *.layout
+*.sim
+*.txt

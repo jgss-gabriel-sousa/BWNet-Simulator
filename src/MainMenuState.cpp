@@ -297,7 +297,7 @@ void MainMenuState::DeleteSimulation(){
     if(simulationSelected != -1){
         string aux;
 
-        aux = "simulations/"+simulationList[simulationSelected].getString()+".txt";
+        aux = "simulations/"+simulationList[simulationSelected].getString()+".sim";
         remove(const_cast<char*>(aux.c_str()));
         aux = "logs/"+simulationList[simulationSelected].getString()+".txt";
         remove(const_cast<char*>(aux.c_str()));
@@ -321,7 +321,7 @@ void MainMenuState::Load(){
         if(line.size() == 0)
             continue;
 
-        ifstream fileTest("simulations/"+line+".txt");
+        ifstream fileTest("simulations/"+line+".sim");
         if(!fileTest.good()){
             cout<<line<<" nao existe"<<endl;
             continue;

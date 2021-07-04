@@ -213,7 +213,7 @@ void EditorState::Load(){
     sf::Sprite spriteAux;
     vector<string> ipList;
 
-    file.open("simulations/"+projectName+".txt");
+    file.open("simulations/"+projectName+".sim");
 
     while(!file.eof() && !file.bad()){
         getline(file,line);
@@ -268,7 +268,7 @@ void EditorState::Save(){
 
     ofstream file,file2;
 
-    file.open("simulations/"+projectName+".txt");
+    file.open("simulations/"+projectName+".sim");
 
     file<<ipListRouters<<"/"<<ipListUsers<<endl;
 
