@@ -17,7 +17,7 @@ void LogWrite(){
         std::ofstream file;
         std::string line;
 
-        file.open("log.txt");
+        file.open("log.txt", std::ios::out);
         for(int i = 0; i < vectorLog.size(); ++i){
             file<<vectorLog[i]<<std::endl;
         }

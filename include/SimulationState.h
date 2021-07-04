@@ -3,10 +3,14 @@
 #include <SFML/Graphics.hpp>
 #include <fstream>
 #include <iostream>
+#include <conio.h>
 
 #include "State.h"
 #include "Game.h"
 #include "Object.h"
+
+#define RoutingTablesUpdateTick 5000 //miliseconds
+
 
 class SimulationState : public State{
 public:
@@ -21,10 +25,14 @@ public:
 
     void CreatePacket(string,sf::Vector2f);
     Object ObjectByIp(string);
-    Object GetNextRouter(Object,vector<string>);
+    Object* ObjectRefByIp(string);
+    void UpdateRoutingTables();
 
     void Simulation(string,string);
     void PacketMovement();
+
+    float Distance(sf::Vector2f, sf::Vector2f);
+    float Distance(sf::Sprite, sf::Sprite);
 
     void Load();
     void SaveLog();
@@ -33,13 +41,14 @@ private:
     GameDataRef _data;
 
     vector<Object> obj;
+    //vector<Packet> packets;
     vector<string> simulationLog;
     vector<string> simulationSteps;
     int actualSimulationStep;
     bool packetMovementAnimation = false;
     bool playButtonVisible = false;
     bool simulationError = false;
-    string origin,destiny;
+    string origin, destiny;
     sf::RectangleShape simulationSpeedBar;
     sf::Sprite simulationSpeedPointer;
     sf::Text simulationSpeedText;
@@ -54,6 +63,7 @@ private:
     float zoomRatio = 1;
 
     sf::Clock auxClock;
+    sf::Clock RoutingTablesUpdateClock;
 
     sf::Cursor cursor;
     sf::Sprite newObject;

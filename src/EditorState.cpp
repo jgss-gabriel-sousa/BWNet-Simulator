@@ -181,7 +181,7 @@ void EditorState::AddObject(){
         }
     }
 
-    for(int i = 0; i<obj.size(); i++){
+    for(int i = 0; i < obj.size(); i++){
         if(obj[i].type == "Router"){
             obj[i].ipsInRouter.clear();
             for(int j = 0;j<obj.size();j++){
@@ -213,7 +213,7 @@ void EditorState::Load(){
     sf::Sprite spriteAux;
     vector<string> ipList;
 
-    file.open("simulations/"+projectName+".txt");
+    file.open("simulations/"+projectName+".sim");
 
     while(!file.eof() && !file.bad()){
         getline(file,line);
@@ -268,7 +268,7 @@ void EditorState::Save(){
 
     ofstream file,file2;
 
-    file.open("simulations/"+projectName+".txt");
+    file.open("simulations/"+projectName+".sim");
 
     file<<ipListRouters<<"/"<<ipListUsers<<endl;
 
@@ -277,7 +277,7 @@ void EditorState::Save(){
     }
 
     if(newSimulation){
-        file2.open("simulations/saveList.txt",ios_base::app);
+        file2.open("simulations/saveConfig.dat",ios_base::app);
         file2<<projectName<<endl;
         newSimulation = false;
     }

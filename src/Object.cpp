@@ -9,7 +9,7 @@ Object::Object(GameDataRef data, string type, string ip, string routerIp, sf::Sp
     sprite.setScale(0.5,0.5);
 }
 
-Object::Object(GameDataRef data,string ip, vector<string> ipsAggregates, sf::Sprite spriteRef) : _data(data){
+Object::Object(GameDataRef data, string ip, vector<string> ipsAggregates, sf::Sprite spriteRef) : _data(data){
     sprite = spriteRef;
     type = "Router";
     this->ip = ip;
@@ -37,7 +37,7 @@ void Object::Draw(){
 }
 
 bool Object::IsInIpList(string userIp){
-    for(int i = 0; i<ipsInRouter.size(); i++){
+    for(int i = 0; i < ipsInRouter.size(); i++){
         if(ipsInRouter[i] == userIp)
             return true;
     }
@@ -51,7 +51,7 @@ string Object::GetNewIP(){
         while(aux.find(".") != string::npos){
             aux = aux.substr(aux.find(".")+1);
         }
-        for(int i = 0; i<256; i++){
+        for(int i = 0; i < 256; i++){
             if(ipList[i] == true){
                 ipList[i] = false;
                 return "192.168."+aux+"."+to_string(i);
@@ -61,11 +61,42 @@ string Object::GetNewIP(){
     return "0.0.0.0";
 }
 
+
 void Object::ResetRouterIpTable(){
-    for(int i = 0; i<256; i++){
+    for(int i = 0; i < 256; i++){
         ipList[i] = true;
     }
 }
+
+
+void Object::UpdateTable(vector<pair<string,string>> newTable){
+    bool existInTable;
+
+    for(int i = 0; i < newTable.size(); i++){
+        existInTable = false;
+        for(int j = 0; j < RoutingTable.size(); j++){
+            if(RoutingTable[j].first == newTable[i].first){
+                if(sizeof(RoutingTable[j].first) > sizeof(newTable[i].first)){
+                    RoutingTable[j] = newTable[i];
+                }
+                existInTable = true;
+            }
+        }
+        if(!existInTable)
+            RoutingTable.push_back(newTable[i]);
+    }
+}
+
+
+string Object::GetRoute(string destinyIP){
+    for(int i = 0; i < RoutingTable.size(); i++){
+        if(RoutingTable[i].first == destinyIP){
+            return RoutingTable[i].second;
+        }
+    }
+    return "error";
+}
+
 
 string Object::Save(){
     string aux = type+";"+ip+";"+routerIp+";"+to_string(sprite.getPosition().x)+","+to_string(sprite.getPosition().y);
@@ -76,7 +107,7 @@ string Object::Save(){
     else{
         aux += ";";
 
-        for(int i = 0; i<ipsInRouter.size(); i++){
+        for(int i = 0; i < ipsInRouter.size(); i++){
             aux += ipsInRouter[i];
 
             if(i != ipsInRouter.size()-1)

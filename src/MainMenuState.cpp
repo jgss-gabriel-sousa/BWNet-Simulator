@@ -47,17 +47,11 @@ void MainMenuState::Init(){
     creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
     creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
     highlited.push_back(creditsText.size());
-    creditsText.push_back(sf::Text("Special Thanks:",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("Laurent Gomila - SFML",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("Bjarne Stroustrup - C++",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
-    highlited.push_back(creditsText.size());
     creditsText.push_back(sf::Text("Powered by BEngine v0.2 @ 04/2020",_data->assets.GetFont("arial"),creditsTextSize));
+    creditsText.push_back(sf::Text("BWNet Simulator v2.0 @ 06/2021",_data->assets.GetFont("arial"),creditsTextSize));
 
-    float x = SCREEN_WIDTH/2;
-    float y = 50;
+    int x = SCREEN_WIDTH/2;
+    int y = 50;
 
     for(int i = 0; i<creditsText.size(); i++){
         creditsText[i].setOrigin(creditsText[i].getGlobalBounds().width/2,creditsText[i].getGlobalBounds().height/2);
@@ -303,7 +297,7 @@ void MainMenuState::DeleteSimulation(){
     if(simulationSelected != -1){
         string aux;
 
-        aux = "simulations/"+simulationList[simulationSelected].getString()+".txt";
+        aux = "simulations/"+simulationList[simulationSelected].getString()+".sim";
         remove(const_cast<char*>(aux.c_str()));
         aux = "logs/"+simulationList[simulationSelected].getString()+".txt";
         remove(const_cast<char*>(aux.c_str()));
@@ -317,7 +311,7 @@ void MainMenuState::Load(){
     string line;
     sf::Text aux;
 
-    file.open("simulations/saveList.txt");
+    file.open("simulations/saveConfig.dat");
 
     simulationList.clear();
 
@@ -327,7 +321,7 @@ void MainMenuState::Load(){
         if(line.size() == 0)
             continue;
 
-        ifstream fileTest("simulations/"+line+".txt");
+        ifstream fileTest("simulations/"+line+".sim");
         if(!fileTest.good()){
             cout<<line<<" nao existe"<<endl;
             continue;
@@ -341,18 +335,10 @@ void MainMenuState::Load(){
         simulationList.push_back(aux);//sf::Text(line,,30));
     }
 
-    fileResave.open("simulations/saveList.txt");
+    fileResave.open("simulations/saveConfig.dat");
     for(int i = 0; i<simulationList.size(); i++){
         line = simulationList[i].getString();
         fileResave<<line<<endl;
     }
 }
-
-
-
-
-
-
-
-
 
