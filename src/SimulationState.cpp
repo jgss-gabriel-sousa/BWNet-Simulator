@@ -202,7 +202,11 @@ void SimulationState::Update(float dt){
     simulationSpeedText.setString("Simulation Speed: "+to_string(simulationSpeed));
     simulationSpeedText.setPosition(SCREEN_WIDTH/2-simulationSpeedText.getGlobalBounds().width/2,2);
 
-    UpdateRoutingTables();
+
+    if(RoutingTablesUpdateClock.getElapsedTime().asMilliseconds() > RoutingTablesUpdateTick){
+        UpdateRoutingTables();
+        RoutingTablesUpdateClock.restart();
+    }
 }
 
 
@@ -389,7 +393,7 @@ void SimulationState::UpdateRoutingTables(){
     vector<pair<string,string>> newTable;
 
     for(int i = 0; i < obj.size(); i++){
-        if(obj[i].type != "router")
+        if(obj[i].type != "Router")
             continue;
 
         newTable.clear();
@@ -397,16 +401,23 @@ void SimulationState::UpdateRoutingTables(){
         for(int j = 0; j < obj.size(); j++){
             if(obj[j].ip == obj[i].ip)
                 continue;
+
             if(Distance(obj[i].sprite, obj[j].sprite) <= obj[i].range.getRadius()){
-                newTable.push_back(make_pair<obj[j].ip, "linked">);
+                newTable.push_back(make_pair(obj[j].ip, "L"));
 
                 for(int k = 0; k < obj[j].RoutingTable.size(); k++){
-                    newTable.push_back(make_pair<obj[j].RoutingTable[k], obj[j].ip>);
+                    newTable.push_back(make_pair(obj[j].RoutingTable[k].first, obj[j].ip+"-"+obj[j].RoutingTable[k].second));
                 }
             }
         }
 
         obj[i].UpdateTable(newTable);
+
+        cout<<"####################"<<endl;
+        cout<<obj[i].ip+" Routing Table \n"<<endl;
+        for(int l = 0; l < obj[i].RoutingTable.size(); l++){
+            cout<<obj[i].RoutingTable[l].first+": "+obj[i].RoutingTable[l].second<<endl;
+        }
     }
 }
 
@@ -468,12 +479,12 @@ Object SimulationState::GetNextRouter(Object objReference,vector<string> ipsToIg
 }
 
 
-float Distance(sf::Vector2f a, sf::Vector2f b){
-    return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
+float SimulationState::Distance(sf::Vector2f a, sf::Vector2f b){
+    return sqrt(pow((a.x - b.x),2) + pow((a.y - b.y),2));
 }
 
-float Distance(sf::Sprite a, sf::Sprite b){
-    return sqrt(pow(a.getPosition().x - b.getPosition().x, 2) + pow(a.getPosition().y - b.getPosition().y, 2));
+float SimulationState::Distance(sf::Sprite a, sf::Sprite b){
+    return sqrt(pow((a.getPosition().x - b.getPosition().x),2) + pow((a.getPosition().y - b.getPosition().y),2));
 }
 
 

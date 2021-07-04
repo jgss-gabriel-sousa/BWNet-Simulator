@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Game.h"
 
+
 class Object{
     public:
         Object(GameDataRef data, string type, string ip, string routerIp, sf::Sprite spriteRef);
@@ -28,7 +29,7 @@ class Object{
         vector<string> ipsInRouter;
         bool ipList[256];
 
-        vector<string> RoutingTable;
+        vector<pair<string,string>> RoutingTable;
 
         string ip;
         string routerIp;

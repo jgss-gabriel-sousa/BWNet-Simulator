@@ -70,14 +70,20 @@ void Object::ResetRouterIpTable(){
 
 
 void Object::UpdateTable(vector<pair<string,string>> newTable){
-    bool isInTable = false;
+    bool existInTable;
 
-    for(int i = 0; i < ipsInRouter.size(); i++){
+    for(int i = 0; i < newTable.size(); i++){
+        existInTable = false;
         for(int j = 0; j < RoutingTable.size(); j++){
-            if(j+1 == RoutingTable.size() || !isInTable){
-                ;
+            if(RoutingTable[j].first == newTable[i].first){
+                if(sizeof(RoutingTable[j].first) > sizeof(newTable[i].first)){
+                    RoutingTable[j] = newTable[i];
+                }
+                existInTable = true;
             }
         }
+        if(!existInTable)
+            RoutingTable.push_back(newTable[i]);
     }
 }
 

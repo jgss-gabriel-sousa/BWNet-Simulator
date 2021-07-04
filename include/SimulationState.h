@@ -3,10 +3,14 @@
 #include <SFML/Graphics.hpp>
 #include <fstream>
 #include <iostream>
+#include <conio.h>
 
 #include "State.h"
 #include "Game.h"
 #include "Object.h"
+
+#define RoutingTablesUpdateTick 5000 //miliseconds
+
 
 class SimulationState : public State{
 public:
@@ -59,6 +63,7 @@ private:
     float zoomRatio = 1;
 
     sf::Clock auxClock;
+    sf::Clock RoutingTablesUpdateClock;
 
     sf::Cursor cursor;
     sf::Sprite newObject;
