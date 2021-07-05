@@ -33,6 +33,9 @@ void LoadingState::Init(){
     _data->assets.LoadTexture("iconPacketSmall");
     _data->assets.LoadTexture("iconPacketSmallRed");
     _data->assets.LoadTexture("iconPacketSmallGreen");
+    _data->assets.LoadTexture("iconResend");
+    _data->assets.LoadTexture("iconResend1");
+    _data->assets.LoadTexture("iconResend2");
 
     _data->assets.LoadAudio("click");
 }
