@@ -66,10 +66,6 @@ void SimulationState::Init(){
     helpText.setOutlineColor(sf::Color::White);
     helpText.setOutlineThickness(1);
     auxClock.restart();
-
-    unsigned char startRoutingRoutines = 5;
-    while(startRoutingRoutines--)
-        UpdateRoutingTables();
 }
 
 
@@ -178,14 +174,13 @@ void SimulationState::ObjectDeletion(){
         if(_data->input.IsSpriteClicked(obj[i].sprite,sf::Mouse::Left,_data->window)){
             for(int j = 0; j < simulationSteps.size(); j++){
                 if(simulationSteps[j] == obj[i].ip){
-                    simulationSteps.erase(simulationSteps.begin()+j);
                     simulationSteps.clear();
+                    break;
                 }
-                cout<<simulationSteps[j]<<endl;
             }
             Simulation(origin, destiny);
 
-            simulationLog.push_back(obj[i].ip+" has deleted");
+            simulationLog.push_back(obj[i].ip+" has been deleted");
             helpText.setString("");
 
             for(int j = 0; j < obj.size(); j++){
@@ -351,11 +346,9 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     }
 
     while(TTL++ < 64){
-        if(route.size() == 0 && TTL == 1){
+        if(route.size() == 0){
             simulationSteps.push_back(actual->ip);
-            simulationLog.push_back("Failed Transmission");
-            simulationLog.push_back("No connection");
-            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual->ip);
+            simulationLog.push_back("Failed Transmission: No connection");
             simulationError = true;
             break;
         }
@@ -369,6 +362,11 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
             simulationError = false;
             break;
         }
+    }
+    if(TTL > 64){
+        simulationSteps.push_back(actual->ip);
+        simulationLog.push_back("Failed Transmission: TTL exceeded");
+        simulationError = true;
     }
 }
 
@@ -411,7 +409,9 @@ void SimulationState::UpdateRoutingTables(){
             }
         }
 
-        simulationLog.push_back(obj[i].ip+" update "+to_string(obj[i].UpdateTable(newTable))+" routes");
+        unsigned int updates = obj[i].UpdateTable(newTable);
+        if(updates > 0)
+            simulationLog.push_back(obj[i].ip+" updated "+to_string(updates)+" routes");
     }
 }
 
