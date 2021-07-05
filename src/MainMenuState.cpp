@@ -318,8 +318,8 @@ void MainMenuState::Load(){
             line = simulationList[i].getString();
             fileResave<<line<<endl;
         }
+        return;
     }
-    return;
 
     simulationList.clear();
 
@@ -339,8 +339,12 @@ void MainMenuState::Load(){
         aux.setOutlineColor(sf::Color::Black);
         aux.setOutlineThickness(2);
 
-        simulationList.push_back(aux);//sf::Text(line,,30));
+        simulationList.push_back(aux);
     }
-
+    fileResave.open("simulations/saveConfig.dat", ios::out);
+    for(int i = 0; i<simulationList.size(); i++){
+        line = simulationList[i].getString();
+        fileResave<<line<<endl;
+    }
 }
 
