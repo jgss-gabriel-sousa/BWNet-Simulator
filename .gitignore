@@ -4,3 +4,4 @@
 *.layout
 *.sim
 *.txt
+simulations/saveConfig.dat
