@@ -307,11 +307,19 @@ void MainMenuState::DeleteSimulation(){
 
 void MainMenuState::Load(){
     ifstream file;
-    ofstream fileResave,file2;
+    ofstream fileResave;
     string line;
     sf::Text aux;
 
     file.open("simulations/saveConfig.dat");
+    if(!file.is_open()){
+        fileResave.open("simulations/saveConfig.dat", ios::out);
+        for(int i = 0; i<simulationList.size(); i++){
+            line = simulationList[i].getString();
+            fileResave<<line<<endl;
+        }
+    }
+    return;
 
     simulationList.clear();
 
@@ -323,7 +331,6 @@ void MainMenuState::Load(){
 
         ifstream fileTest("simulations/"+line+".sim");
         if(!fileTest.good()){
-            cout<<line<<" nao existe"<<endl;
             continue;
         }
 
@@ -335,10 +342,5 @@ void MainMenuState::Load(){
         simulationList.push_back(aux);//sf::Text(line,,30));
     }
 
-    fileResave.open("simulations/saveConfig.dat");
-    for(int i = 0; i<simulationList.size(); i++){
-        line = simulationList[i].getString();
-        fileResave<<line<<endl;
-    }
 }
 
