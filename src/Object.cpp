@@ -69,22 +69,27 @@ void Object::ResetRouterIpTable(){
 }
 
 
-void Object::UpdateTable(vector<pair<string,string>> newTable){
+unsigned int Object::UpdateTable(vector<pair<string,string>> newTable){
     bool existInTable;
+    unsigned int improvements = 0;
 
     for(int i = 0; i < newTable.size(); i++){
         existInTable = false;
         for(int j = 0; j < RoutingTable.size(); j++){
             if(RoutingTable[j].first == newTable[i].first){
-                if(sizeof(RoutingTable[j].first) > sizeof(newTable[i].first)){
+                if(RoutingTable[j].second.size() > newTable[i].second.size()){
                     RoutingTable[j] = newTable[i];
+                    improvements++;
                 }
                 existInTable = true;
             }
         }
-        if(!existInTable)
+        if(!existInTable){
             RoutingTable.push_back(newTable[i]);
+            improvements++;
+        }
     }
+    return improvements;
 }
 
 

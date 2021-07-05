@@ -19,10 +19,14 @@ void SimulationState::Init(){
     closeButton.setTexture(_data->assets.GetTexture("buttonClose"));
     playButton.setTexture(_data->assets.GetTexture("buttonPlay"));
     packetIcon.setTexture(_data->assets.GetTexture("iconPacket"));
+    resendIcon.setTexture(_data->assets.GetTexture("iconResend"));
+    resendIcon1.setTexture(_data->assets.GetTexture("iconResend1"));
+    resendIcon2.setTexture(_data->assets.GetTexture("iconResend2"));
     packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmall"));
     statsWindow.setTexture(&_data->assets.GetTexture("blackScreen"),false);
     simulationSpeedBar.setTexture(&_data->assets.GetTexture("blackScreen"),false);
     simulationSpeedPointer.setTexture(_data->assets.GetTexture("simulationSpeedPointer"));
+    deleteButton.setTexture(_data->assets.GetTexture("buttonDelete"));
 
     helpText.setFont(_data->assets.GetFont("arial"));
     statsText[0].setFont(_data->assets.GetFont("arial"));
@@ -40,6 +44,9 @@ void SimulationState::Init(){
     closeButton.setPosition(SCREEN_WIDTH-closeButton.getGlobalBounds().width,0);
     playButton.setPosition(0,-80);
     packetIcon.setPosition(10,0);
+    resendIcon1.setPosition(packetIcon.getGlobalBounds().width+20+resendIcon1.getGlobalBounds().width/2,resendIcon1.getGlobalBounds().height/2);
+    resendIcon2.setPosition(packetIcon.getGlobalBounds().width+20,0);
+    deleteButton.setPosition(148,0);
     packetSimulated.setPosition(0,-80);
     simulationSpeedBar.setPosition(SCREEN_WIDTH/2-simulationSpeedBar.getGlobalBounds().width/2,simulationSpeedBar.getGlobalBounds().height+24);
     simulationSpeedPointer.setOrigin(simulationSpeedPointer.getGlobalBounds().width/2,simulationSpeedPointer.getGlobalBounds().height/2);
@@ -52,6 +59,8 @@ void SimulationState::Init(){
     uiView.setCenter(SCREEN_WIDTH/2,SCREEN_HEIGHT/2);
     objView.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
     objView.setCenter(SCREEN_WIDTH/2,SCREEN_HEIGHT/2);
+
+    resendIcon1.setOrigin(resendIcon1.getGlobalBounds().width/2,resendIcon1.getGlobalBounds().height/2);
 
     helpText.setColor(sf::Color::Black);
     helpText.setOutlineColor(sf::Color::White);
@@ -90,99 +99,49 @@ void SimulationState::HandleInput(){
             }
         }
 
-        //Selection Bar items
-        if(_data->input.IsSpriteClicked(packetIcon,sf::Mouse::Left,_data->window)){
-            newObject.setTexture(_data->assets.GetTexture("iconPacket"));
-            newObject.setScale(0.5,0.5);
-            creatingPackage = true;
-            showPacketLine = false;
-            helpText.setString("Select Origin");
-        }
+        if(_data->input.IsSpriteClicked(playButton,sf::Mouse::Left,_data->window))
+            PlayButtonFunc();
+        if(_data->input.IsSpriteClicked(resendIcon,sf::Mouse::Left,_data->window))
+            ResendButtonFunc();
+        if(_data->input.IsSpriteClicked(deleteButton,sf::Mouse::Left,_data->window))
+            DeleteButtonFunc();
 
-        if(creatingPackage && creatingPackageDestiny == false){
-            bool aux = false;
-            for(int i = 0; i < obj.size(); i++){
-                if(_data->input.IsSpriteClicked(obj[i].sprite,sf::Mouse::Left,_data->window)){
-                    sf::Sprite spriteAux = obj[i].sprite;
-
-                    origin = obj[i].ip;
-                    CreatePacket("origin",sf::Vector2f(spriteAux.getPosition().x+spriteAux.getGlobalBounds().width/2,
-                                                        spriteAux.getPosition().y+spriteAux.getGlobalBounds().height/2));
-                    helpText.setString("Select Destination");
-                    aux = true;
-                    break;
-                }
-            }
-            if(aux == false){
-                if(_data->input.IsSpriteClicked(background,sf::Mouse::Left,_data->window)){
-                    if(creatingPackage)
-                        CreatePacket("delete",background.getPosition());
-                }
-            }
-        }
-        if(creatingPackageDestiny){
-            bool aux = false;
-            for(int i = 0; i < obj.size(); i++){
-                if(_data->input.IsSpriteClicked(obj[i].sprite,sf::Mouse::Left,_data->window)){
-                    sf::Sprite spriteAux = obj[i].sprite;
-
-                    destiny = obj[i].ip;
-                    CreatePacket("destiny",sf::Vector2f(spriteAux.getPosition().x+spriteAux.getGlobalBounds().width/2,
-                                                        spriteAux.getPosition().y+spriteAux.getGlobalBounds().height/2));
-                    aux = true;
-                    break;
-                }
-            }
-            if(aux == false){
-                if(_data->input.IsSpriteClicked(background,sf::Mouse::Left,_data->window)){
-                    if(creatingPackage)
-                        CreatePacket("delete",background.getPosition());
-                }
-            }
-        }
-
-        if(_data->input.IsSpriteClicked(playButton,sf::Mouse::Left,_data->window)){
-            packetMovementAnimation = true;
-            packetSimulated.setPosition(ObjectByIp(origin).sprite.getPosition());
-            actualSimulationStep = 0;
-            packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmall"));
-        }
-
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            if(_data->input.IsOverSprite(simulationSpeedPointer,_data->window)){
-                pointerFollowMouse = true;
-            }
-        }else
-            pointerFollowMouse = false;
-
-        if(pointerFollowMouse){
-            simulationSpeedPointer.setPosition(_data->input.GetMousePosition(_data->window,uiView).x,simulationSpeedPointer.getPosition().y);
-
-            if(simulationSpeedPointer.getPosition().x > simulationSpeedBar.getPosition().x+simulationSpeedBar.getGlobalBounds().width){
-                simulationSpeedPointer.setPosition(simulationSpeedBar.getPosition().x+simulationSpeedBar.getGlobalBounds().width,
-                                                   simulationSpeedPointer.getPosition().y);
-            }else if(simulationSpeedPointer.getPosition().x < simulationSpeedBar.getPosition().x){
-                simulationSpeedPointer.setPosition(simulationSpeedBar.getPosition().x,simulationSpeedPointer.getPosition().y);
-            }
-        }
+        PacketButtonFunc();
+        SimulationSpeedFunc();
     }
 }
 
 
 void SimulationState::Update(float dt){
-    if(movingCamera){
+    if(movingCamera)
         objView.setCenter(sf::Vector2f(_data->window.mapPixelToCoords(sf::Vector2i(sf::Mouse::getPosition()))));
-    }
-    newObject.setPosition(_data->input.GetMousePosition(_data->window,uiView));
 
-    if(packetMovementAnimation){
+    newObject.setPosition(_data->input.GetMousePosition(_data->window,uiView));
+    if(deletingObject){
+        creatingPackage = false;
+        newObject.setTexture(_data->assets.GetTexture("buttonDelete"));
+        ObjectDeletion();
+    }else
+        newObject.setTexture(_data->assets.GetTexture("iconPacket"));
+
+    if(packetMovementAnimation)
         PacketMovement();
-    }
 
     if(playButtonVisible){
         playButton.setPosition(SCREEN_WIDTH-128,0);
-    }else{
-        playButton.setPosition(SCREEN_WIDTH-128,-80);
+        resendIcon.setPosition(packetIcon.getGlobalBounds().width+20,0);
+    }
+    else{
+        playButton.setPosition(SCREEN_WIDTH-128,-1000);
+        resendIcon.setPosition(SCREEN_WIDTH-128,-1000);
+    }
+
+    if(resending && playButtonVisible && actualSimulationStep == -1){
+        if(resendingClock.getElapsedTime().asMilliseconds() > ResendingTick){
+            Simulation(origin, destiny);
+            PlayButtonFunc();
+            resendingClock.restart();
+        }
     }
 
     if(showStatsWindow){
@@ -197,15 +156,74 @@ void SimulationState::Update(float dt){
 
     pointerPos = simulationSpeedPointer.getPosition().x - 300;
     larguraBox = simulationSpeedBar.getPosition().x+simulationSpeedBar.getGlobalBounds().width - 300;
-    simulationSpeed = (pow(pointerPos,2)/pow(larguraBox,2))/0.5;
+    simulationSpeed = (pow(pointerPos,2)/pow(larguraBox,2))/0.25;
 
-    simulationSpeedText.setString("Simulation Speed: "+to_string(simulationSpeed));
+    aux = to_string(simulationSpeed);
+    aux = aux.substr(0,aux.find(".")+2);
+    simulationSpeedText.setString("Simulation Speed: "+aux);
     simulationSpeedText.setPosition(SCREEN_WIDTH/2-simulationSpeedText.getGlobalBounds().width/2,2);
 
-
+    int RoutingTablesUpdateTick = ROUTING_TICK/simulationSpeed;
     if(RoutingTablesUpdateClock.getElapsedTime().asMilliseconds() > RoutingTablesUpdateTick){
         UpdateRoutingTables();
         RoutingTablesUpdateClock.restart();
+    }
+}
+
+
+void SimulationState::ObjectDeletion(){
+    for(int i = 0; i < obj.size(); i++){
+        if(_data->input.IsSpriteClicked(obj[i].sprite,sf::Mouse::Left,_data->window)){
+            for(int j = 0; j < simulationSteps.size(); j++){
+                if(simulationSteps[j] == obj[i].ip){
+                    simulationSteps.erase(simulationSteps.begin()+j);
+                    simulationSteps.clear();
+                }
+                cout<<simulationSteps[j]<<endl;
+            }
+            Simulation(origin, destiny);
+
+            simulationLog.push_back(obj[i].ip+" has deleted");
+            helpText.setString("");
+
+            for(int j = 0; j < obj.size(); j++){
+                if(obj[j].routerIp == obj[i].ip){
+                    string oldIp = obj[j].ip;
+                    obj[j].routerIp = "0.0.0.0";
+                    obj[j].ip = "0.0.0.0";
+
+                    float minimumRouterDistance = 0;
+                    float routerDistance;
+                    int closestRouter = -1;
+                    int k = 0;
+                    for(; k < obj.size(); k++){
+                        routerDistance = Distance(obj[j].sprite, obj[k].sprite);
+                        if(routerDistance <= obj[k].range.getRadius() && routerDistance < minimumRouterDistance){
+                            closestRouter = k;
+                        }
+                        else if(routerDistance <= obj[k].range.getRadius() && minimumRouterDistance == 0){
+                            closestRouter = k;
+                        }
+                    }
+
+                    if(closestRouter != -1){
+                        obj[j].routerIp = obj[closestRouter].ip;
+                        obj[j].ip = obj[closestRouter].GetNewIP();
+                    }
+
+                    if(oldIp == destiny){
+                        destiny = obj[j].ip;
+                    }
+                    else if(oldIp == origin){
+                        origin = obj[j].ip;
+                    }
+                }
+            }
+
+            obj.erase(obj.begin()+i);
+            deletingObject = false;
+            break;
+        }
     }
 }
 
@@ -239,193 +257,116 @@ void SimulationState::CreatePacket(string action, sf::Vector2f point){
 
 
 void SimulationState::PacketMovement(){
-    sf::Vector2f targetPos = ObjectByIp(simulationSteps[actualSimulationStep]).sprite.getPosition();
-    sf::Vector2f actualPos = packetSimulated.getPosition();
     float movSpeed = simulationSpeed;
-    float distance = sqrt(pow(targetPos.x-actualPos.x, 2) + pow(targetPos.y-actualPos.y, 2));
+    float distance;
 
-    if(distance < 10){
-        actualSimulationStep++;
-        if(actualSimulationStep == simulationSteps.size()){
-            packetMovementAnimation = false;
-            actualSimulationStep = 0;
-            if(simulationError)
-                packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmallRed"));
-            else
-                packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmallGreen"));
-            return;
+    if(ObjectRefByIp(simulationSteps[actualSimulationStep]) == nullptr){
+        distance = 0;
+        simulationError = true;
+        actualSimulationStep = simulationSteps.size()+1;
+    }
+    else{
+        sf::Vector2f targetPos = ObjectRefByIp(simulationSteps[actualSimulationStep])->sprite.getPosition();
+        sf::Vector2f actualPos = packetSimulated.getPosition();
+        distance = Distance(targetPos,actualPos);
+
+        if(targetPos.x-movSpeed > actualPos.x){
+            packetSimulated.setPosition(packetSimulated.getPosition().x + movSpeed,
+                                        packetSimulated.getPosition().y);
+        }else if(targetPos.x+movSpeed < actualPos.x){
+            packetSimulated.setPosition(packetSimulated.getPosition().x - movSpeed,
+                                        packetSimulated.getPosition().y);
+        }
+        if(targetPos.y-movSpeed > actualPos.y){
+            packetSimulated.setPosition(packetSimulated.getPosition().x,
+                                        packetSimulated.getPosition().y + movSpeed);
+        }else if(targetPos.y+movSpeed < actualPos.y){
+            packetSimulated.setPosition(packetSimulated.getPosition().x,
+                                        packetSimulated.getPosition().y - movSpeed);
         }
     }
 
-    if(targetPos.x-movSpeed > actualPos.x){
-        packetSimulated.setPosition(packetSimulated.getPosition().x + movSpeed,
-                                    packetSimulated.getPosition().y);
-    }else if(targetPos.x+movSpeed < actualPos.x){
-        packetSimulated.setPosition(packetSimulated.getPosition().x - movSpeed,
-                                    packetSimulated.getPosition().y);
+    if(distance < 10){
+        actualSimulationStep++;
     }
-    if(targetPos.y-movSpeed > actualPos.y){
-        packetSimulated.setPosition(packetSimulated.getPosition().x,
-                                    packetSimulated.getPosition().y + movSpeed);
-    }else if(targetPos.y+movSpeed < actualPos.y){
-        packetSimulated.setPosition(packetSimulated.getPosition().x,
-                                    packetSimulated.getPosition().y - movSpeed);
+    if(actualSimulationStep >= simulationSteps.size()){
+        packetMovementAnimation = false;
+        actualSimulationStep = -1;
+        if(simulationError)
+            packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmallRed"));
+        else if(!simulationError && showPacketLine && actualSimulationStep != simulationSteps.size())
+            packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmallGreen"));
     }
 }
 
 
 void SimulationState::Simulation(string ipOrigin,string ipDestiny){
-    Object destiny;
-    Object actual;
-    Object next;
-    Object aux;
+    Object* destiny;
+    Object* actual;
     unsigned char TTL = 0;
     vector<string> route;
 
     packetSimulated.setTexture(_data->assets.GetTexture("iconPacketSmall"));
 
-    if(ObjectByIp(ipOrigin).type != "null"){
-        actual = ObjectByIp(ipOrigin);
-    }
-    else
+    if(ObjectRefByIp(ipOrigin) != nullptr &&
+       ObjectRefByIp(ipDestiny) != nullptr &&
+       ObjectRefByIp(ipOrigin)->type != "null" &&
+       ObjectRefByIp(ipDestiny)->type != "null"){
+        actual = ObjectRefByIp(ipOrigin);
+        destiny = ObjectRefByIp(ipDestiny);
+    }else{
+        simulationError = true;
         return;
-
-    if(ObjectByIp(ipDestiny).type != "null"){
-        destiny = ObjectByIp(ipDestiny);
     }
-    else
-        return;
 
     simulationLog.push_back("##############################");
-    simulationLog.push_back(" Origin: "+actual.ip);
-    simulationLog.push_back("Destiny: "+destiny.ip);
+    simulationLog.push_back(" Origin: "+actual->ip);
+    simulationLog.push_back("Destiny: "+destiny->ip);
     simulationLog.push_back("");
     simulationSteps.clear();
-    simulationError = false;
 
     string fullRoute;
-    if(actual.type != "Router")
-        fullRoute = ObjectRefByIp(actual.routerIp)->GetRoute(ipDestiny);
+    if(actual->type != "Router"){
+        if(ObjectRefByIp(actual->routerIp) != nullptr)
+            fullRoute = ObjectRefByIp(actual->routerIp)->GetRoute(ipDestiny);
+        else
+            fullRoute = "error";
+    }
     else
-        fullRoute = ObjectRefByIp(actual.ip)->GetRoute(ipDestiny);
-
+        fullRoute = actual->GetRoute(ipDestiny);
 
     if(fullRoute != "error"){
-        route.push_back(actual.ip);
+        route.push_back(actual->ip);
 
-        if(actual.type != "Router")
-            route.push_back(actual.routerIp);
+        if(actual->type != "Router")
+            route.push_back(actual->routerIp);
 
         while(fullRoute != "L"){
             route.push_back(fullRoute.substr(0,fullRoute.find("-")));
             fullRoute = fullRoute.substr(fullRoute.find("-")+1);
         }
-        route.push_back(destiny.ip);
+        route.push_back(destiny->ip);
     }
-
 
     while(TTL++ < 64){
         if(route.size() == 0 && TTL == 1){
-            cout<<"No connection"<<endl;
-            simulationSteps.push_back(actual.ip);
-            simulationLog.push_back("-----------------------------");
+            simulationSteps.push_back(actual->ip);
+            simulationLog.push_back("Failed Transmission");
             simulationLog.push_back("No connection");
-            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
-            TTL = 64;
+            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual->ip);
+            simulationError = true;
             break;
         }
 
-
         simulationSteps.push_back(route[0]);
-        cout<<route[0]<<endl;
         simulationLog.push_back("Hop("+to_string(TTL)+"): "+route[0]);
         route.erase(route.begin());
 
-        if(route.size() == 0)
-            break;
-
-        //simulationSteps = route;
-
-        /*
-        if(actual.ip == destiny.ip){
-            simulationSteps.push_back(actual.ip);
-            simulationLog.push_back("-----------------------------");
-            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
-            for(int i = 0; i<simulationSteps.size(); i++){
-                cout<<simulationSteps[i]<<endl;
-            }
+        if(route.size() == 0){
+            simulationLog.push_back("Successful Transmission");
+            simulationError = false;
             break;
         }
-
-        //Não possui Conexão
-        if(actual.ip == "" || actual.ip == "0.0.0.0"){
-            cout<<"No connection"<<endl;
-            simulationSteps.push_back(actual.ip);
-            simulationLog.push_back("-----------------------------");
-            simulationLog.push_back("No connection");
-            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
-            TTL = 30;
-            break;
-        }
-        //Se não for um roteador e não estiver no fim da rede, então siga para o Roteador conectado
-        else if(actual.type != "Router"){
-            cout<<"forwarding to router"<<endl;
-            next = ObjectByIp(actual.routerIp);
-        }
-        //Se for um Roteador e o IP Destino estiver na sua lista, o próximo salto será o destino
-        else if(actual.ip == destiny.routerIp){
-            cout<<"router, connected with destiny"<<endl;
-            next = destiny;
-        }
-
-        /*
-        //Se for um Roteador deve buscar uma rota na tabela de roteamento. Se não houver, fará o Flooding da rede.
-        else if(actual.type == "Router"){
-            cout<<"router, searching in routing table"<<endl;
-            ;
-            Flooding();
-            next = ObjectByIp(actual.routerIp);
-        }
-        */
-        /*
-        //Se for um Roteador e o IP Destino não estiver na sua lista, siga para o roteador mais próximo
-        else if(aux.type != "null"){
-            cout<<"go to nearest router"<<endl;
-            next = aux;
-        }else if(aux.type == "null"){
-            cout<<"error"<<endl;
-            simulationSteps.push_back(actual.ip);
-            simulationLog.push_back("-----------------------------");
-            simulationLog.push_back("No connection");
-            simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
-            TTL = 30;
-            break;
-        }
-
-        //Se não se encaixar em nenhuma característica anterior é porque está sem conexão
-        else{
-            cout<<"without connection"<<endl;
-            next = actual;
-            simulationSteps.push_back(actual.ip);
-            simulationLog.push_back("-----------------------------");
-            simulationLog.push_back("Salto("+to_string(TTL)+"): "+actual.ip);
-            continue;
-        }
-
-        simulationSteps.push_back(actual.ip);
-        aux = GetNextRouter(actual,simulationSteps);
-        simulationLog.push_back("-----------------------------");
-        simulationLog.push_back("Hop("+to_string(TTL)+"): "+actual.ip);
-        actual = next;
-        */
-    }
-    if(TTL >= 64){
-        simulationError = true;
-        simulationLog.push_back("-----------------------------");
-        simulationLog.push_back("Unreachable Destiny");
-    }else{
-        simulationLog.push_back("-----------------------------");
-        simulationLog.push_back("Package Transferred");
     }
 }
 
@@ -434,7 +375,7 @@ void SimulationState::UpdateRoutingTables(){
     vector<pair<string,string>> newTable;
 
     for(int i = 0; i < obj.size(); i++){
-        if(obj[i].type != "Router")
+        if(obj[i].type != "Router" || rand()%3 != 0) //this rand is to simulate the difference in update speed between the routers
             continue;
 
         newTable.clear();
@@ -447,30 +388,29 @@ void SimulationState::UpdateRoutingTables(){
                     newTable.push_back(make_pair(obj[j].RoutingTable[k].first, obj[j].ip+"-"+obj[j].RoutingTable[k].second));
                 }
             }
+
+            string aux;
+            if(obj[j].type == "Router"){
+                for(int k = 0; k < obj[j].RoutingTable.size(); k++){
+                    if(ObjectRefByIp(obj[j].RoutingTable[k].first) == nullptr){
+                        obj[j].RoutingTable.erase(obj[j].RoutingTable.begin()+k);
+                        continue;
+                    }
+                    aux = obj[j].RoutingTable[k].second;
+                    while(aux != "L"){
+                        if(ObjectRefByIp(aux.substr(0,aux.find("-"))) == nullptr){
+                            obj[j].RoutingTable.erase(obj[j].RoutingTable.begin()+k);
+                            break;
+                        }
+
+                        aux = aux.substr(aux.find("-")+1);
+                    }
+                }
+            }
         }
 
-        obj[i].UpdateTable(newTable);
-
-        /*
-        cout<<"####################"<<endl;
-        cout<<obj[i].ip+" Routing Table \n"<<endl;
-        for(int l = 0; l < obj[i].RoutingTable.size(); l++){
-            cout<<obj[i].RoutingTable[l].first+": "+obj[i].RoutingTable[l].second<<endl;
-        }
-        */
+        simulationLog.push_back(obj[i].ip+" update "+to_string(obj[i].UpdateTable(newTable))+" routes");
     }
-}
-
-
-Object SimulationState::ObjectByIp(string ip){
-    for(int i = 0; i<obj.size(); i++){
-        if(obj[i].ip == ip)
-            return obj[i];
-    }
-
-    Object nullObject;
-    nullObject.type = "null";
-    return nullObject;
 }
 
 
@@ -567,8 +507,31 @@ void SimulationState::Draw(float dt){
     for(int i = 0; i < obj.size(); i++){
         obj[i].Draw();
     }
-    if(showPacketLine)
+    if(showPacketLine){
         _data->window.draw(packetLine,2,sf::Lines);
+
+        sf::Vector2f aux;
+
+        packetRoute = sf::VertexArray(sf::LinesStrip, simulationSteps.size());
+
+        for(int i = 0; i < simulationSteps.size(); i++){
+            packetRoute[i].color = sf::Color::Blue;
+
+            if(ObjectRefByIp(simulationSteps[i]) != nullptr){
+                aux = ObjectRefByIp(simulationSteps[i])->sprite.getPosition();
+                aux.x += ObjectRefByIp(simulationSteps[i])->sprite.getGlobalBounds().width/2;
+                aux.y += ObjectRefByIp(simulationSteps[i])->sprite.getGlobalBounds().height/2;
+            }
+            else if(i > 0){
+                packetRoute[i-1].color = sf::Color::Transparent;
+                packetRoute[i].color = sf::Color::Transparent;
+                break;
+            }
+
+            packetRoute[i].position = aux;
+        }
+        _data->window.draw(packetRoute);
+    }
 
     _data->window.setView(uiView);
 
@@ -578,8 +541,17 @@ void SimulationState::Draw(float dt){
     _data->window.draw(packetIcon);
     _data->window.draw(helpText);
     _data->window.draw(packetSimulated);
+    _data->window.draw(deleteButton);
 
-    if(creatingPackage)
+    if(resending){
+        _data->window.draw(resendIcon1);
+        resendIcon1.rotate(-3);
+        _data->window.draw(resendIcon2);
+    }else{
+        _data->window.draw(resendIcon);
+    }
+
+    if(creatingPackage || deletingObject)
         _data->window.draw(newObject);
 
     _data->window.draw(statsWindow);
