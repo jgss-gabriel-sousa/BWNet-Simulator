@@ -1,10 +1,10 @@
 #pragma once
 
 //############################
-#define GAME_FRAMERATE 60
+#define GAME_FRAMERATE 30
 #define SCREEN_WIDTH 800    //Pixels
 #define SCREEN_HEIGHT 600   //Pixels
-#define SHOW_CONSOLE 0
+#define SHOW_CONSOLE 1
 #define GENERATE_LOG 1
 
 //############################

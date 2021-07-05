@@ -48,7 +48,7 @@ void MainMenuState::Init(){
     creditsText.push_back(sf::Text("",_data->assets.GetFont("arial"),creditsTextSize));
     highlited.push_back(creditsText.size());
     creditsText.push_back(sf::Text("Powered by BEngine v0.2 @ 04/2020",_data->assets.GetFont("arial"),creditsTextSize));
-    creditsText.push_back(sf::Text("BWNet Simulator v2.0 @ 07/2021",_data->assets.GetFont("arial"),creditsTextSize));
+    creditsText.push_back(sf::Text("BWNet Simulator v2.1 @ 07/2021",_data->assets.GetFont("arial"),creditsTextSize));
 
     int x = SCREEN_WIDTH/2;
     int y = 50;
