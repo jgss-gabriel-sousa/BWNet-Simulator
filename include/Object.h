@@ -18,7 +18,7 @@ class Object{
         bool IsInIpList(string);
         string GetNewIP();
         void ResetRouterIpTable();
-        void UpdateTable(vector<pair<string,string>>);
+        unsigned int UpdateTable(vector<pair<string,string>>);
         sf::Vector2f GetPosition(){return sprite.getPosition();}
         string GetRoute(string);
 
