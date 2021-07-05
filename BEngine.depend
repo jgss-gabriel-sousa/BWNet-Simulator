@@ -244,7 +244,7 @@
 	"DEFINITIONS.h"
 	"log.h"
 
-1625447416 g:\git\bwnet-simulator\include\definitions.h
+1625454259 g:\git\bwnet-simulator\include\definitions.h
 
 1623977726 g:\git\bwnet-simulator\include\log.h
 	<string>
@@ -355,10 +355,12 @@
 1623977726 source:g:\git\bwnet-simulator\src\statemachine.cpp
 	"StateMachine.h"
 
-1625447407 source:g:\git\bwnet-simulator\src\simulationstate.cpp
+1625454236 source:g:\git\bwnet-simulator\src\simulationstate.cpp
 	"SimulationState.h"
 	"MainMenuState.h"
 
-1625446885 source:g:\git\bwnet-simulator\src\simulationstate_buttonfuncs.cpp
+1625454147 source:g:\git\bwnet-simulator\src\simulationstate_buttonfuncs.cpp
 	"SimulationState.h"
+
+1623977726 source:g:\git\bwnet-simulator\icon.rc
 

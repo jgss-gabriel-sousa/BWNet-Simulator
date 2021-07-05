@@ -8,6 +8,7 @@ void SimulationState::PacketButtonFunc(){
         creatingPackage = true;
         deletingObject = false;
         showPacketLine = false;
+        resending = false;
         helpText.setString("Select Origin");
     }
 
@@ -102,6 +103,7 @@ void SimulationState::DeleteButtonFunc(){
     if(auxClock2.getElapsedTime().asSeconds() > 0.5){
         auxClock2.restart();
         newObject.setTexture(_data->assets.GetTexture("buttonDelete"));
+        newObject.setScale(0.5,0.5);
         deletingObject = true;
         helpText.setString("Delete");
     }

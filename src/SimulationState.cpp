@@ -66,8 +66,10 @@ void SimulationState::Init(){
     helpText.setOutlineColor(sf::Color::White);
     helpText.setOutlineThickness(1);
     auxClock.restart();
-    UpdateRoutingTables();
-    UpdateRoutingTables();
+
+    unsigned char startRoutingRoutines = 5;
+    while(startRoutingRoutines--)
+        UpdateRoutingTables();
 }
 
 
