@@ -8,7 +8,7 @@
 		<Option virtualFolders="States\;" />
 		<Build>
 			<Target title="Release">
-				<Option output="bin/Release/sfml test" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/BWNet" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -29,6 +29,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="icon.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="include/AssetManager.h" />
 		<Unit filename="include/DEFINITIONS.h" />
 		<Unit filename="include/EditorState.h">
@@ -72,6 +75,7 @@
 		<Unit filename="src/SimulationState.cpp">
 			<Option virtualFolder="States/" />
 		</Unit>
+		<Unit filename="src/SimulationState_ButtonFuncs.cpp" />
 		<Unit filename="src/StateMachine.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
