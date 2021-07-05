@@ -244,7 +244,7 @@
 	"DEFINITIONS.h"
 	"log.h"
 
-1625447416 g:\git\bwnet-simulator\include\definitions.h
+1625411994 g:\git\bwnet-simulator\include\definitions.h
 
 1623977726 g:\git\bwnet-simulator\include\log.h
 	<string>
@@ -283,7 +283,7 @@
 1623977726 source:g:\git\bwnet-simulator\src\inputmanager.cpp
 	"InputManager.h"
 
-1625423751 source:g:\git\bwnet-simulator\src\loadingstate.cpp
+1623977726 source:g:\git\bwnet-simulator\src\loadingstate.cpp
 	"LoadingState.h"
 	"MainMenuState.h"
 
@@ -302,13 +302,12 @@
 	<iostream>
 	<fstream>
 
-1625444861 source:g:\git\bwnet-simulator\src\main.cpp
+1623977726 source:g:\git\bwnet-simulator\src\main.cpp
 	"Game.h"
 	"DEFINITIONS.h"
 	<windows.h>
-	<ctime>
 
-1625447951 source:g:\git\bwnet-simulator\src\mainmenustate.cpp
+1625409575 source:g:\git\bwnet-simulator\src\mainmenustate.cpp
 	"MainMenuState.h"
 	"EditorState.h"
 	"SimulationState.h"
@@ -321,16 +320,17 @@
 	"Game.h"
 	"Object.h"
 
-1625445553 g:\git\bwnet-simulator\include\object.h
+1625408150 g:\git\bwnet-simulator\include\object.h
 	<SFML/Graphics.hpp>
 	<string>
 	<iostream>
 	"Game.h"
 
-1625446216 g:\git\bwnet-simulator\include\simulationstate.h
+1625411976 g:\git\bwnet-simulator\include\simulationstate.h
 	<SFML/Graphics.hpp>
 	<fstream>
 	<iostream>
+	<conio.h>
 	"State.h"
 	"Game.h"
 	"Object.h"
@@ -339,7 +339,7 @@
 	"EditorState.h"
 	"MainMenuState.h"
 
-1625445424 source:g:\git\bwnet-simulator\src\object.cpp
+1625408243 source:g:\git\bwnet-simulator\src\object.cpp
 	"Object.h"
 
 1624384263 source:g:\git\bwnet-simulator\src\packet.cpp
@@ -355,10 +355,7 @@
 1623977726 source:g:\git\bwnet-simulator\src\statemachine.cpp
 	"StateMachine.h"
 
-1625447407 source:g:\git\bwnet-simulator\src\simulationstate.cpp
+1625411977 source:g:\git\bwnet-simulator\src\simulationstate.cpp
 	"SimulationState.h"
 	"MainMenuState.h"
-
-1625446885 source:g:\git\bwnet-simulator\src\simulationstate_buttonfuncs.cpp
-	"SimulationState.h"
 
