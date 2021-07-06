@@ -24,10 +24,10 @@ typedef shared_ptr<GameData> GameDataRef;
 
 class Game{
 public:
-    Game(int width, int height, string title);
+    Game(int width, int height, string title, unsigned int framerate);
 
 private:
-    const float dt = 1.0f/60.0f;
+    const float dt = 1.0f/45.0f;
     sf::Clock _clock;
 
     GameDataRef _data = make_shared<GameData>();

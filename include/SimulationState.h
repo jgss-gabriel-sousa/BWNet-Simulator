@@ -8,7 +8,7 @@
 #include "Game.h"
 #include "Object.h"
 
-#define ROUTING_TICK 3000 //miliseconds
+#define ROUTING_TICK 5000 //miliseconds
 #define ResendingTick 3000 //miliseconds
 
 
@@ -33,6 +33,7 @@ public:
 
     float Distance(sf::Vector2f, sf::Vector2f);
     float Distance(sf::Sprite, sf::Sprite);
+    sf::Vector2f Interpolate(const sf::Vector2f& pointA, const sf::Vector2f& pointB, float factor);
 
     void PlayButtonFunc();
     void SimulationSpeedFunc();

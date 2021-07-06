@@ -50,7 +50,7 @@ void SimulationState::Init(){
     packetSimulated.setPosition(0,-80);
     simulationSpeedBar.setPosition(SCREEN_WIDTH/2-simulationSpeedBar.getGlobalBounds().width/2,simulationSpeedBar.getGlobalBounds().height+24);
     simulationSpeedPointer.setOrigin(simulationSpeedPointer.getGlobalBounds().width/2,simulationSpeedPointer.getGlobalBounds().height/2);
-    simulationSpeedPointer.setPosition(SCREEN_WIDTH/2,simulationSpeedBar.getPosition().y);
+    simulationSpeedPointer.setPosition((SCREEN_WIDTH/2)-71,simulationSpeedBar.getPosition().y);
     simulationSpeedText.setCharacterSize(14);
 
     helpText.setPosition(0,SCREEN_HEIGHT-40);
@@ -135,12 +135,28 @@ void SimulationState::Update(float dt){
     }
 
     if(resending && playButtonVisible && actualSimulationStep == -1){
-        if(resendingClock.getElapsedTime().asMilliseconds() > ResendingTick){
+        if(resendingClock.getElapsedTime().asMilliseconds() > ResendingTick/simulationSpeed){
             Simulation(origin, destiny);
             PlayButtonFunc();
             resendingClock.restart();
         }
     }
+
+    for(int i = 0; i < obj.size(); i++){
+        if(obj[i].type == "Router"){
+            if(_data->input.IsOverSprite(obj[i].sprite,_data->window)){
+                obj[i].range.setFillColor(sf::Color(0,0,255,20));
+                obj[i].range.setOutlineColor(sf::Color(0,0,255,100));
+                obj[i].range.setOutlineThickness(-5);
+            }
+            else if(obj[i].range.getFillColor().r == 0){
+                obj[i].range.setFillColor(sf::Color(255,0,0,10));
+                obj[i].range.setOutlineColor(sf::Color::Red);
+                obj[i].range.setOutlineThickness(1);
+            }
+        }
+    }
+
 
     if(showStatsWindow){
         statsWindow.setPosition(SCREEN_WIDTH-statsWindow.getSize().x,SCREEN_HEIGHT-statsWindow.getSize().y);
@@ -154,7 +170,7 @@ void SimulationState::Update(float dt){
 
     pointerPos = simulationSpeedPointer.getPosition().x - 300;
     larguraBox = simulationSpeedBar.getPosition().x+simulationSpeedBar.getGlobalBounds().width - 300;
-    simulationSpeed = (pow(pointerPos,2)/pow(larguraBox,2))/0.25;
+    simulationSpeed = (pow(pointerPos,2)/pow(larguraBox,2))/0.02;
 
     aux = to_string(simulationSpeed);
     aux = aux.substr(0,aux.find(".")+2);
@@ -162,6 +178,10 @@ void SimulationState::Update(float dt){
     simulationSpeedText.setPosition(SCREEN_WIDTH/2-simulationSpeedText.getGlobalBounds().width/2,2);
 
     int RoutingTablesUpdateTick = ROUTING_TICK/simulationSpeed;
+    if(!playButtonVisible)
+        RoutingTablesUpdateTick *= 4;
+    if(simulationError)
+        RoutingTablesUpdateTick /= 4;
     if(RoutingTablesUpdateClock.getElapsedTime().asMilliseconds() > RoutingTablesUpdateTick){
         UpdateRoutingTables();
         RoutingTablesUpdateClock.restart();
@@ -181,6 +201,7 @@ void SimulationState::ObjectDeletion(){
             Simulation(origin, destiny);
 
             simulationLog.push_back(obj[i].ip+" has been deleted");
+            cout<<obj[i].ip+" has been deleted"<<endl;
             helpText.setString("");
 
             for(int j = 0; j < obj.size(); j++){
@@ -194,6 +215,9 @@ void SimulationState::ObjectDeletion(){
                     int closestRouter = -1;
                     int k = 0;
                     for(; k < obj.size(); k++){
+                        if(obj[k].ip == obj[i].ip)
+                            continue;
+
                         routerDistance = Distance(obj[j].sprite, obj[k].sprite);
                         if(routerDistance <= obj[k].range.getRadius() && routerDistance < minimumRouterDistance){
                             closestRouter = k;
@@ -206,6 +230,8 @@ void SimulationState::ObjectDeletion(){
                     if(closestRouter != -1){
                         obj[j].routerIp = obj[closestRouter].ip;
                         obj[j].ip = obj[closestRouter].GetNewIP();
+                        cout<<"obj[j].routerIp: "<<obj[j].routerIp<<endl;
+                        cout<<"obj[j].ip: "<<obj[j].ip<<endl;
                     }
 
                     if(oldIp == destiny){
@@ -238,7 +264,7 @@ void SimulationState::CreatePacket(string action, sf::Vector2f point){
         playButtonVisible = true;
         packetMovementAnimation = false;
         packetSimulated.setPosition(0, -80);
-        packetLine[0] = sf::Vertex(point, sf::Color::Green);
+        packetLine[0] = sf::Vertex(point, sf::Color(0,140,0,255));
         auxClock.restart();
     }
     else if(action == "destiny" && auxClock.getElapsedTime().asSeconds() > 1){
@@ -247,14 +273,14 @@ void SimulationState::CreatePacket(string action, sf::Vector2f point){
         showPacketLine = true;
         Simulation(origin, destiny);
         playButtonVisible = true;
-        packetLine[1] = sf::Vertex(point, sf::Color::Green);
+        packetLine[1] = sf::Vertex(point, sf::Color(0,140,0,255));
         helpText.setString("");
     }
 }
 
 
 void SimulationState::PacketMovement(){
-    float movSpeed = simulationSpeed;
+    float movSpeed = simulationSpeed > 8 ? 8 : simulationSpeed;
     float distance;
 
     if(ObjectRefByIp(simulationSteps[actualSimulationStep]) == nullptr){
@@ -267,6 +293,8 @@ void SimulationState::PacketMovement(){
         sf::Vector2f actualPos = packetSimulated.getPosition();
         distance = Distance(targetPos,actualPos);
 
+        packetSimulated.setPosition(Interpolate(packetSimulated.getPosition(), targetPos, simulationSpeed/25));
+/*
         if(targetPos.x-movSpeed > actualPos.x){
             packetSimulated.setPosition(packetSimulated.getPosition().x + movSpeed,
                                         packetSimulated.getPosition().y);
@@ -280,7 +308,7 @@ void SimulationState::PacketMovement(){
         }else if(targetPos.y+movSpeed < actualPos.y){
             packetSimulated.setPosition(packetSimulated.getPosition().x,
                                         packetSimulated.getPosition().y - movSpeed);
-        }
+        }*/
     }
 
     if(distance < 10){
@@ -296,10 +324,21 @@ void SimulationState::PacketMovement(){
     }
 }
 
+sf::Vector2f SimulationState::Interpolate(const sf::Vector2f& pointA, const sf::Vector2f& pointB, float factor){
+	if(factor > 1.f)
+        factor = 1.f;
+
+	else if(factor < 0.f)
+        factor = 0.f;
+
+	return pointA + (pointB - pointA) * factor;
+}
+
+
 
 void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     Object* destiny;
-    Object* actual;
+    Object* origin;
     unsigned char TTL = 0;
     vector<string> route;
 
@@ -309,7 +348,7 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
        ObjectRefByIp(ipDestiny) != nullptr &&
        ObjectRefByIp(ipOrigin)->type != "null" &&
        ObjectRefByIp(ipDestiny)->type != "null"){
-        actual = ObjectRefByIp(ipOrigin);
+        origin = ObjectRefByIp(ipOrigin);
         destiny = ObjectRefByIp(ipDestiny);
     }else{
         simulationError = true;
@@ -317,26 +356,29 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
     }
 
     simulationLog.push_back("##############################");
-    simulationLog.push_back(" Origin: "+actual->ip);
+    simulationLog.push_back(" Origin: "+origin->ip);
     simulationLog.push_back("Destiny: "+destiny->ip);
     simulationLog.push_back("");
+    cout<<"##############################"<<endl;
+    cout<<" Origin: "+origin->ip<<endl;
+    cout<<"Destiny: "+destiny->ip<<"\n"<<endl;
     simulationSteps.clear();
 
     string fullRoute;
-    if(actual->type != "Router"){
-        if(ObjectRefByIp(actual->routerIp) != nullptr)
-            fullRoute = ObjectRefByIp(actual->routerIp)->GetRoute(ipDestiny);
+    if(origin->type != "Router"){
+        if(ObjectRefByIp(origin->routerIp) != nullptr)
+            fullRoute = ObjectRefByIp(origin->routerIp)->GetRoute(ipDestiny);
         else
             fullRoute = "error";
     }
     else
-        fullRoute = actual->GetRoute(ipDestiny);
+        fullRoute = origin->GetRoute(ipDestiny);
 
     if(fullRoute != "error"){
-        route.push_back(actual->ip);
+        route.push_back(origin->ip);
 
-        if(actual->type != "Router")
-            route.push_back(actual->routerIp);
+        if(origin->type != "Router")
+            route.push_back(origin->routerIp);
 
         while(fullRoute != "L"){
             route.push_back(fullRoute.substr(0,fullRoute.find("-")));
@@ -347,25 +389,28 @@ void SimulationState::Simulation(string ipOrigin,string ipDestiny){
 
     while(TTL++ < 64){
         if(route.size() == 0){
-            simulationSteps.push_back(actual->ip);
+            simulationSteps.push_back(origin->ip);
             simulationLog.push_back("Failed Transmission: No connection");
+            cout<<"Failed Transmission: No connection"<<endl;
             simulationError = true;
             break;
         }
 
         simulationSteps.push_back(route[0]);
         simulationLog.push_back("Hop("+to_string(TTL)+"): "+route[0]);
+        cout<<"Hop("+to_string(TTL)+"): "+route[0]<<endl;
         route.erase(route.begin());
 
         if(route.size() == 0){
             simulationLog.push_back("Successful Transmission");
+            cout<<"Successful Transmission"<<endl;
             simulationError = false;
             break;
         }
     }
     if(TTL > 64){
-        simulationSteps.push_back(actual->ip);
         simulationLog.push_back("Failed Transmission: TTL exceeded");
+        cout<<"Failed Transmission: TTL exceeded"<<endl;
         simulationError = true;
     }
 }
@@ -410,8 +455,10 @@ void SimulationState::UpdateRoutingTables(){
         }
 
         unsigned int updates = obj[i].UpdateTable(newTable);
-        if(updates > 0)
+        if(updates > 0){
             simulationLog.push_back(obj[i].ip+" updated "+to_string(updates)+" routes");
+            cout<<obj[i].ip+" updated "+to_string(updates)+" routes"<<endl;
+        }
     }
 }
 

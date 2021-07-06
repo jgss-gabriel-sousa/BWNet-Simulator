@@ -1,9 +1,9 @@
 #include "Game.h"
 #include "LoadingState.h"
 
-Game::Game(int width, int height, std::string title){
+Game::Game(int width, int height, std::string title, unsigned int framerate){
     _data->window.create(sf::VideoMode(width,height),title,sf::Style::Close | sf::Style::Titlebar);
-    _data->window.setFramerateLimit(GAME_FRAMERATE);
+    _data->window.setFramerateLimit(framerate);
     _data->machine.AddState(StateRef(new LoadingState(this->_data)));
 
     sf::Image icon;
@@ -12,6 +12,7 @@ Game::Game(int width, int height, std::string title){
 
     this->Run();
 }
+
 
 void Game::Run(){
     float newTime, frameTime, interpolation;
