@@ -5,4 +5,5 @@
 *.sim
 *.txt
 *.res
+*.depend
 simulations/saveConfig.dat
